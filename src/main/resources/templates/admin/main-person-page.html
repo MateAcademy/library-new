@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Главная страница</title>
+  <style>
+    body {
+      background-image: url('/fon/pexels-minan1398.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-attachment: fixed;
+
+      font-family: Arial, sans-serif;
+      /*background: linear-gradient(135deg, #f7f7f7, #e3e3e3);*/
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      padding: 30px;
+      width: 90%;
+      max-width: 1000px;
+      margin: 50px auto;
+      position: relative;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+    }
+
+    .title {
+      font-size: 32px;
+      color: #007bff;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+    }
+
+    .title::before {
+      content: "📂";
+      font-size: 28px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .user-info span {
+      font-weight: bold;
+    }
+
+    .logout-link {
+      font-size: 14px;
+      color: #dc3545;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 10px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+    }
+
+    .logout-link:hover {
+      background: #ffe5e5;
+      border: 1px solid #dc3545;
+      transform: scale(1.05);
+    }
+
+    .menu-wrapper {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .menu {
+      flex: 1;
+      min-width: 280px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .menu a {
+      display: block;
+      padding: 14px;
+      font-size: 18px;
+      color: white;
+      background: #007bff;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .menu a:hover {
+      background: #0056b3;
+      transform: scale(1.05);
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    .input-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .btn {
+      padding: 10px 15px;
+      font-size: 16px;
+      color: white;
+      background: #28a745;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn:hover {
+      background: #218838;
+      transform: scale(1.05);
+    }
+
+    .btn-delete {
+      background: #dc3545;
+    }
+
+    .btn-delete:hover {
+      background: #c82333;
+    }
+
+    hr {
+      margin: 30px 0;
+      border: none;
+      border-top: 1px solid #ccc;
+    }
+  </style>
+
+  <script>
+    function findUser() {
+      const userId = document.getElementById("userId").value;
+      if (userId) {
+        window.location.href = "/admin/people/" + userId;
+      } else {
+        alert("Введите ID пользователя");
+      }
+    }
+
+    function updateUser() {
+      const updateId = document.getElementById("updateId").value;
+      if (updateId) {
+        window.location.href = "/admin/people/" + updateId + "/edit";
+      } else {
+        alert("Введите ID пользователя для обновления");
+      }
+    }
+
+    function deleteUser() {
+      const deleteId = document.getElementById("deleteId").value;
+      if (deleteId) {
+        const form = document.getElementById("deleteForm");
+        form.action = "/admin/people/" + deleteId;
+        form.submit();
+      } else {
+        alert("Введите ID пользователя для удаления");
+      }
+    }
+
+    function deleteBook() {
+      const deleteBookId = document.getElementById("deleteBookId").value;
+      if (deleteBookId) {
+        const form = document.getElementById("deleteBookForm");
+        form.action = "/admin/books/" + deleteBookId;
+        form.submit();
+      } else {
+        alert("Введите ID книги для удаления");
+      }
+    }
+
+    function findBook() {
+      const bookId = document.getElementById("bookId").value;
+      if (bookId) {
+        window.location.href = "/admin/books/" + bookId;
+      } else {
+        alert("Введите ID книги");
+      }
+    }
+
+    function updateBook() {
+      const updateBookId = document.getElementById("updateBookId").value;
+      if (updateBookId) {
+        window.location.href = "/admin/books/" + updateBookId + "/edit";
+      } else {
+        alert("Введите ID книги для изменения");
+      }
+    }
+
+    function searchBookByTitle() {
+      const title = document.getElementById("bookTitle").value;
+      if (title) {
+        window.location.href = "/admin/books/search?title=" + encodeURIComponent(title);
+      } else {
+        alert("Введите название книги для поиска");
+      }
+    }
+
+  </script>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1 class="title">Меню</h1>
+    <div class="user-info">
+      👤 <span th:text="${username}">Админ</span>
+      <a href="/logout" class="logout-link" title="Выйти из аккаунта">
+        🚪 <span>Выйти</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="menu-wrapper">
+
+    <!-- Меню пользователей -->
+    <div class="menu">
+      <h2 style="color: #007bff;">👥 Пользователи</h2>
+      <a href="/admin/people">📋 Показать всех пользователей</a>
+      <a href="/admin/people/new">➕ Добавить нового пользователя</a>
+
+      <div class="input-group">
+        <input type="number" id="userId" placeholder="Введите ID">
+        <button class="btn" onclick="findUser()">🔍 Найти</button>
+      </div>
+
+      <div class="input-group">
+        <input type="number" id="updateId" placeholder="Введите ID">
+        <button class="btn" onclick="updateUser()">♻️ Обновить</button>
+      </div>
+
+      <div class="input-group">
+        <input type="number" id="deleteId" placeholder="Введите ID">
+        <button class="btn btn-delete" onclick="deleteUser()">❌ Удалить</button>
+      </div>
+
+      <form id="deleteForm" method="post" style="display: none;">
+        <input type="hidden" name="_method" value="delete"/>
+      </form>
+
+      <hr>
+
+      <h3 style="color: #333; margin-bottom: 10px;">🔄 Массовое добавление</h3>
+      <div class="input-group">
+        <form action="/admin/people/insert1000People" method="get" style="margin: 0;">
+          <button class="btn" type="submit">➕ Вставить 1000</button>
+        </form>
+        <form action="/admin/people/butch_insert1000People" method="get" style="margin: 0;">
+          <button class="btn" type="submit">🚀 Batch вставка</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Меню книг -->
+    <div class="menu">
+      <h2 style="color: #28a745;">📚 Библиотека</h2>
+      <a href="/admin/books">📖 Все книги</a>
+      <a href="/admin/books/new">➕ Добавить книгу</a>
+
+      <div class="input-group">
+        <input type="number" id="bookId" placeholder="ID книги">
+        <button class="btn" onclick="findBook()">🔍 Найти</button>
+      </div>
+
+      <div class="input-group">
+        <input type="number" id="updateBookId" placeholder="ID книги">
+        <button class="btn" onclick="updateBook()">✏️ Изменить</button>
+      </div>
+
+      <div class="input-group">
+        <input type="number" id="deleteBookId" placeholder="Введите ID книги">
+        <button class="btn btn-delete" onclick="deleteBook()">❌ Удалить</button>
+      </div>
+
+      <form id="deleteBookForm" method="post" style="display: none;">
+        <input type="hidden" name="_method" value="delete"/>
+      </form>
+
+      <hr>
+
+      <h3 style="color: #333; margin-top: 20px;">🔎 Поиск по названию</h3>
+      <div class="input-group">
+        <input type="text" id="bookTitle" placeholder="Введите название книги">
+        <button class="btn" onclick="searchBookByTitle()">🔍 Искать</button>
+      </div>
+    </div>
+
+  </body>
+</html>

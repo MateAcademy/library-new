@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Добавить новую книгу</title>
+  <style>
+    body {
+      background-image: url('/fon/pexels-minan1398.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-attachment: fixed;
+
+      font-family: Arial, sans-serif;
+      /*background-color: #f4f4f4;*/
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      padding: 30px;
+      width: 400px;
+      margin: 20px auto;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    .form-group {
+      text-align: left;
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      color: white;
+      background: #28a745;
+      border: none;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #218838;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      background: #007bff;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.3s ease-in-out, transform 0.2s;
+    }
+
+    .back-button:hover {
+      background: #0056b3;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Добавить новую книгу</h2>
+
+  <form th:action="@{/admin/books}" method="post" th:object="${book}">
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input type="text" id="title" th:field="*{title}" required>
+      <div style="color: red" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">Title error</div>
+    </div>
+
+    <div class="form-group">
+      <label for="author">Автор</label>
+      <input type="text" id="author" th:field="*{author}" required>
+      <div style="color: red" th:if="${#fields.hasErrors('author')}" th:errors="*{author}">Author error</div>
+    </div>
+
+    <div class="form-group">
+      <label for="year">Year</label>
+      <input type="number" id="year" th:field="*{year}" required>
+      <div style="color: red" th:if="${#fields.hasErrors('year')}" th:errors="*{year}">Year error</div>
+    </div>
+
+    <button type="submit" class="btn">Создать</button>
+  </form>
+</div>
+
+<a href="/admin/main-person-page" class="back-button">🏠 Вернуться на главную</a>
+
+</body>
+</html>

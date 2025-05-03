@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Информация о книге</title>
+    <style>
+        body {
+            background-image: url('/fon/pexels-minan1398.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 400px;
+            margin: 20px auto;
+            text-align: left;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        h1, h2 {
+            color: white;
+        }
+
+        p {
+            font-size: 18px;
+            color: #555;
+        }
+
+        strong {
+            color: #000;
+        }
+
+        .btn {
+            display: inline-block;
+            margin: 10px 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background: #007bff;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-green {
+            background: #28a745;
+        }
+
+        .btn-green:hover {
+            background: #218838;
+        }
+
+        .select-group {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        select {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 6px;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: #007bff;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.3s ease-in-out, transform 0.2s;
+        }
+
+        .back-button:hover {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+
+    </style>
+</head>
+<body>
+
+<h1 class="back-button">📖 Данные о книге</h1>
+
+<div class="card">
+    <p><strong>ID:</strong> <span th:text="${book.book_id}"></span></p>
+    <p><strong>Название:</strong> <span th:text="${book.title}"></span></p>
+    <p><strong>Автор:</strong> <span th:text="${book.author}"></span></p>
+    <p><strong>Год издания:</strong> <span th:text="${book.year}"></span></p>
+</div>
+
+<!-- Если книга свободна -->
+<div class="card">
+    <div th:if="${book.getOwner() == null}">
+        <h2 style="color: black;">✅ Книга в библиотеке и свободна</h2>
+
+        <div class="select-group">
+            <form th:action="@{/admin/books/assign}" method="post">
+                <input type="hidden" name="bookId" th:value="${book.book_id}"/>
+                <label for="person">Кому назначить книгу?</label><br>
+                <select name="personId" id="person" required>
+                    <option value="" disabled selected>Выберите человека</option>
+                    <option th:each="person : ${people}"
+                            th:value="${person.person_id}"
+                            th:text="${person.name}"></option>
+                </select><br>
+                <button class="btn btn-green" type="submit">Назначить книгу</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Если книгу кто-то взял -->
+    <div th:if="${book.getOwner() != null}">
+        <h2 style="color: black;">📚 Книга сейчас у: <span th:text="${book_personName}">ФИО</span></h2>
+
+        <form th:action="@{/admin/books/unassign}" method="post" style="margin-top: 15px;">
+            <input type="hidden" name="bookId" th:value="${book.book_id}"/>
+            <button type="submit" class="btn btn-danger">Освободить книгу</button>
+        </form>
+    </div>
+</div>
+
+<!-- Управляющие кнопки -->
+<div style="margin-top: 30px;">
+    <a th:href="@{/admin/books/{id}/edit(id=${book.book_id})}" class="btn">✏️ Редактировать</a>
+
+    <form th:action="@{/admin/books/{id}(id=${book.book_id})}" method="post" style="display:inline;">
+        <input type="hidden" name="_method" value="delete"/>
+        <button type="submit" class="btn btn-danger">❌ Удалить</button>
+    </form>
+</div>
+
+<a href="/admin/main-person-page" class="btn">🏠 Вернуться на главную</a>
+
+</body>
+</html>
