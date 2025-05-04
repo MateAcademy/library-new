@@ -10,22 +10,12 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BookResponse {
+public class CopyBookResponse {
 
     Long book_id;
     String title;
     String author;
     Integer year;
-    int totalCopies;
-    int availableCopies;
+    Long person_id;
 
-
-    public BookResponse(Long book_id, String title, String author, Integer year) {
-        this.book_id = book_id;
-        this.title = title;
-        this.author = author;
-        this.year = year;
-        this.totalCopies = 0;
-        this.availableCopies = 0;
-    }
 }

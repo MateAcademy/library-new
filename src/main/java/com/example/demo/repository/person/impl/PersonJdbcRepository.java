@@ -24,6 +24,11 @@ public class PersonJdbcRepository implements PersonRepository {
 
     final PostgresConnector postgresConnector;
 
+    @Override
+    public Optional<Long> findMaxPersonId() {
+        return Optional.empty();
+    }
+
     public List<Person> findAll() {
         System.out.println("findAll in jdbc");
         List<Person> people = new ArrayList<>();
@@ -47,6 +52,11 @@ public class PersonJdbcRepository implements PersonRepository {
     @Override
     public Page<Person> findAll(Pageable pageable) {
         return null;
+    }
+
+    @Override
+    public Optional<Person> findByPersonId(Long id) {
+        return Optional.empty();
     }
 
     public Optional<Person> findById(Long person_id) {
@@ -88,7 +98,7 @@ public class PersonJdbcRepository implements PersonRepository {
 
             ResultSet generatedKeys = ps.getGeneratedKeys();
             if (generatedKeys.next()) {
-                person.setPerson_id(generatedKeys.getLong(1));
+                person.setPersonId(generatedKeys.getLong(1));
             }
 
         } catch (SQLException e) {
@@ -106,7 +116,7 @@ public class PersonJdbcRepository implements PersonRepository {
             ps.setInt(2, updatedPerson.getAge());
             ps.setString(3, updatedPerson.getEmail());
             ps.setString(4, updatedPerson.getAddress());
-            ps.setLong(5, updatedPerson.getPerson_id());
+            ps.setLong(5, updatedPerson.getPersonId());
 
             ps.executeUpdate();
 
@@ -141,7 +151,7 @@ public class PersonJdbcRepository implements PersonRepository {
 
     private Person mapRow(ResultSet rs) throws SQLException {
         return new Person(
-            rs.getLong("person_id"),
+            rs.getString("person_media_id"),
             rs.getString("name"),
             rs.getInt("age"),
             rs.getString("email"),

@@ -27,13 +27,12 @@ public class BookValidator implements Validator {
     public void validate(Object target, Errors errors) {
         Book book = (Book) target;
 
-        // Если это создание новой книги
-        if (book.getBook_id() == null) {
+        if (book.getBookId() == null) {
             if (bookRepository.findByTitle(book.getTitle()).isPresent()) {
                 errors.rejectValue("title", "400 Error", "Book with this title already exists");
             }
         } else {
-            bookRepository.findById(book.getBook_id()).ifPresent(existingBook -> {
+            bookRepository.findById(book.getBookId()).ifPresent(existingBook -> {
                 if (!Objects.equals(existingBook.getTitle(), book.getTitle())) {
                     if (bookRepository.findByTitle(book.getTitle()).isPresent()) {
                         errors.rejectValue("title", "400 Error", "Book with this title already exists");

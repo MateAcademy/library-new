@@ -120,9 +120,9 @@
 
 <h1 class="back-button">Обновление пользователя</h1>
 
-<form th:action="@{'/admin/people/' + ${person.getPerson_id()}}" th:object="${person}" th:method="patch">
+<form th:action="@{'/admin/people/' + ${person.getPersonId()}}" th:object="${person}" th:method="patch">
     <label>ID (нельзя изменить):</label>
-    <input type="text" th:field="*{person_id}" readonly/>
+    <input type="text" th:field="*{personId}" readonly/>
 
     <label>Имя:</label>
     <input type="text" th:field="*{name}" required/>

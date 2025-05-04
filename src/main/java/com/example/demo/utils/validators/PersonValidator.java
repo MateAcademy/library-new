@@ -29,13 +29,13 @@ public class PersonValidator implements Validator {
         Person person = (Person) target;
 
         // Если новая запись (ID == null)
-        if (person.getPerson_id() == null) {
+        if (person.getPersonId() == null) {
             if (personRepository.findByEmail(person.getEmail()).isPresent()) {
                 errors.rejectValue("email", "400 Error", "Person with this email already exists");
             }
         } else {
             // Обновление — проверка, отличается ли email
-            personRepository.findById(person.getPerson_id()).ifPresent(existingPerson -> {
+            personRepository.findByPersonId(person.getPersonId()).ifPresent(existingPerson -> {
                 if (!Objects.equals(existingPerson.getEmail(), person.getEmail())) {
                     if (personRepository.findByEmail(person.getEmail()).isPresent()) {
                         errors.rejectValue("email", "400 Error", "Person with this email already exists");

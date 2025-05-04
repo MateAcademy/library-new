@@ -2,7 +2,9 @@ package com.example.demo.controller.admin;
 
 import com.example.demo.dto.BookResponse;
 import com.example.demo.models.Book;
+import com.example.demo.models.BookCopy;
 import com.example.demo.models.Person;
+import com.example.demo.service.BookCopyService;
 import com.example.demo.service.BookService;
 
 import com.example.demo.service.PeopleService;
@@ -24,6 +26,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Controller
@@ -33,6 +37,7 @@ import java.util.Optional;
 public class BookController {
 
     final BookService bookService;
+    final BookCopyService bookCopyService;
     final PeopleService peopleService;
     final BookValidator bookValidator;
 
@@ -54,28 +59,22 @@ public class BookController {
         return "/books/all-books";
     }
 
-    @GetMapping("{id}")
-    public String show(@PathVariable Long id, Model model) {
-        Optional<Book> book = bookService.getBookById(id);
+    @GetMapping("{book_id}")
+    public String showBookCopysById(@PathVariable Long book_id, Model model) {
+        Optional<Book > bookOpt = bookService.getBookById(book_id);
 
-        if (book.isPresent()) {
-            Book bookFromDB = book.get();
-            Long personId = bookFromDB.getOwner() != null ? bookFromDB.getOwner().getPerson_id() : null;
-            String name = null;
-            if (personId != null) {
-                Optional<Person> personById = peopleService.getPersonById(personId);
-                if (personById.isPresent()) {
-                    name = personById.get().getName();
-                }
-            }
-
-            model.addAttribute("book", bookFromDB);
-            model.addAttribute("people", peopleService.getAllPeople()); // список для выпадающего меню
-            model.addAttribute("book_personName", name); // если книга у человека
-            return "/books/book-details";
-        } else {
+        if (bookOpt.isEmpty()) {
             return "/admin/book-not-found";
         }
+
+        Book book = bookOpt.get();
+        List<BookCopy> copies = bookCopyService.getCopiesByBookId(book.getBookId());
+
+        model.addAttribute("book", book);
+        model.addAttribute("copies", copies);
+        model.addAttribute("people", peopleService.getAllPeople());
+
+        return "/books/book-details";
     }
 
     @GetMapping("new")
@@ -85,13 +84,15 @@ public class BookController {
 
     @PostMapping
     public String create(@ModelAttribute @Valid Book book,
-                         BindingResult bindingResult) {
+                         BindingResult bindingResult,
+                         @RequestParam("copyCount") int copyCount) {
         bookValidator.validate(book, bindingResult);
 
         if (bindingResult.hasErrors()) {
             return "/books/new-book";
         }
-        bookService.save(book);
+
+        bookService.saveWithCopies(book, copyCount);
         return "/admin/success-create-book-page";
     }
 
@@ -133,18 +134,18 @@ public class BookController {
         return "/books/all-books"; // можно сделать отдельный шаблон "search-result"
     }
 
-    @PostMapping("/unassign")
-    public String unassignBook(@RequestParam("bookId") Long bookId) {
-        bookService.unassignBook(bookId);
-        return "redirect:/admin/books/" + bookId;
-    }
-
-    @PostMapping("/assign")
-    public String assignBook(@RequestParam("bookId") Long bookId,
-                             @RequestParam("personId") Long personId) {
-        bookService.assignBook(bookId, personId);
-        return "redirect:/admin/books/" + bookId;
-    }
+//    @PostMapping("/unassign")
+//    public String unassignBook(@RequestParam("bookId") Long bookId) {
+//        bookService.unassignBook(bookId);
+//        return "redirect:/admin/books/" + bookId;
+//    }
+//
+//    @PostMapping("/assign")
+//    public String assignBook(@RequestParam("bookId") Long bookId,
+//                             @RequestParam("personId") Long personId) {
+//        bookService.assignBook(bookId, personId);
+//        return "redirect:/admin/books/" + bookId;
+//    }
 
     @GetMapping("insert1000People")
     public String insert1000Books() {

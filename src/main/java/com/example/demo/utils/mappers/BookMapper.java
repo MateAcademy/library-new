@@ -12,11 +12,11 @@ public class BookMapper {
 
     public List<BookResponse> mapToBookResponseList(List<Book> books) {
         return books.stream()
-            .map(book -> new BookResponse(book.getBook_id(), book.getTitle(), book.getAuthor(), book.getYear(),  book.getOwner() != null ? book.getOwner().getPerson_id() : null))
+            .map(book -> new BookResponse(book.getBookId(), book.getTitle(), book.getAuthor(), book.getYear() ))
             .collect(Collectors.toList());
     }
 
     public BookResponse mapToBookResponse(Book book) {
-        return new BookResponse(book.getBook_id(), book.getTitle(), book.getAuthor(), book.getYear(),  book.getOwner() != null ? book.getOwner().getPerson_id() : null);
+        return new BookResponse(book.getBookId(), book.getTitle(), book.getAuthor(), book.getYear());
     }
 }

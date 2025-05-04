@@ -1,12 +1,6 @@
 package com.example.demo.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -22,7 +16,12 @@ import lombok.experimental.FieldDefaults;
 import java.util.List;
 
 @Entity
-@Table(name = "person")
+@Table(
+    name = "person",
+    indexes = {
+        @Index(name = "idx_person_media_id", columnList = "person_media_id")
+    }
+)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,7 +31,10 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "person_id")
-    Long person_id;
+    Long personId;
+
+    @Column(name = "person_media_id")
+    String personMediaId;
 
     @NotEmpty(message = "Name should not be empty")
     @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
@@ -59,10 +61,19 @@ public class Person {
     String address;
 
     @OneToMany(mappedBy = "owner")
-    List<Book> books;
+    List<BookCopy> books;
 
-    public Person(Long person_id, String name, Integer age, String email, String address) {
-        this.person_id = person_id;
+    public Person(String personMediaId, String name, Integer age, String email, String address) {
+        this.personMediaId = personMediaId;
+        this.name = name;
+        this.age = age;
+        this.email = email;
+        this.address = address;
+    }
+
+    public Person(Long person_id, String personMediaId, String name, Integer age, String email, String address) {
+        this.personId = person_id;
+        this.personMediaId = personMediaId;
         this.name = name;
         this.age = age;
         this.email = email;
@@ -74,13 +85,5 @@ public class Person {
         this.age = age;
         this.email = email;
         this.address = address;
-    }
-
-    public Person(String name, Integer age, String email, String address, List<Book> books) {
-        this.name = name;
-        this.age = age;
-        this.email = email;
-        this.address = address;
-        this.books = books;
     }
 }

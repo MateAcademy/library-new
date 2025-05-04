@@ -12,14 +12,16 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PersonResponse {
 
-    Long person_id;
+    Long personId;
+    String personMediaId;
     String name;
     Integer age;
     String email;
     String address;
 
-    public PersonResponse(Long person_id, String name) {
-        this.person_id = person_id;
+    public PersonResponse(Long personId, String personMediaId, String name) {
+        this.personId = personId;
+        this.personMediaId = personMediaId;
         this.name = name;
     }
 }

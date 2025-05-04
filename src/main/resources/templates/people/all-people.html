@@ -77,19 +77,10 @@
 </head>
 <body>
 
-<!--<h1 style="color: white" class="back-button">Список пользователей библиотеки</h1>-->
-
-<!--<div class="container">-->
-<!--    <div class="card" th:each="person: ${people}">-->
-<!--        <a th:href="@{/admin/people/{id}(id=${person.getPerson_id()})}" th:text="${person.getName()}">Имя пользователя</a>-->
-<!--    </div>-->
-<!--</div>-->
-
-<!--<a href="/admin/main-person-page" class="back-button">🏠 Вернуться на главную</a>-->
-
 <div class="container" id="peopleContainer">
     <div class="card" th:each="person: ${people}">
-        <a th:href="@{/admin/people/{id}(id=${person.getPerson_id()})}" th:text="${person.getName()}">Имя пользователя</a>
+        <a th:href="@{/admin/people/{id}(id=${person.personId})}" th:text="${person.getName()}">Имя пользователя</a>
+        <p style="margin-top: 8px; color: #333;" th:text="'ID: ' + ${person.personMediaId}">ID</p>
     </div>
 </div>
 

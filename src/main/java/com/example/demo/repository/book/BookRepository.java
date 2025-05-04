@@ -18,7 +18,6 @@ public interface BookRepository {
     void update(Book book);
     void delete(long book_id);
     void butchSaveAll(List<Book> books);
-    List<Book> findByPersonId(Long personId);
     void unassignBook(Long bookId);
     void assignBook(Long bookId, Long personId);
 }

@@ -1,6 +1,8 @@
 package com.example.demo.repository.person.impl;
 
 import com.example.demo.errors.PersonNotDeletedException;
+import com.example.demo.models.Book;
+import com.example.demo.models.BookCopy;
 import com.example.demo.models.Person;
 import com.example.demo.repository.person.PersonRepository;
 import lombok.AccessLevel;
@@ -10,6 +12,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +21,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +36,14 @@ public class PersonJdbcTemplateRepository implements PersonRepository {
 
     final JdbcTemplate jdbcTemplate;
 
-    public List<Person> findAll() {
+    @Override
+    public Optional<Long> findMaxPersonId() {
+        String sql = "SELECT MAX(person_id) FROM person";
+        Long result = jdbcTemplate.queryForObject(sql, Long.class);
+        return Optional.ofNullable(result);
+    }
+
+        public List<Person> findAll() {
         System.out.println("findAll in jdbc-template");
         String sql = "SELECT * FROM person";
         return jdbcTemplate.query(sql, personRowMapper);
@@ -50,12 +63,111 @@ public class PersonJdbcTemplateRepository implements PersonRepository {
         return new PageImpl<>(people, pageable, total);
     }
 
-    public Optional<Person> findById(Long person_id) {
-        String sql = "SELECT * FROM person WHERE person_id = ?";
-        List<Person> people = jdbcTemplate.query(sql, personRowMapper, person_id);
-        //todo: you can return an error that a person with such an ID was simply not found
-        return people.stream().findFirst();
+//    @Override
+//    public Optional<Person> findByPersonId(Long person_id) {
+//        String sql = """
+//            SELECT
+//                p.person_id, p.name, p.age, p.email, p.address,
+//                bc.copy_id, bc.is_available
+//            FROM person p
+//            LEFT JOIN book_copy bc ON bc.person_id = p.person_id
+//            WHERE p.person_id = ?
+//            """;
+//
+//        List<Person> result = jdbcTemplate.query(sql, rs -> {
+//            Person person = null;
+//            List<BookCopy> books = new ArrayList<>();
+//
+//            while (rs.next()) {
+//                if (person == null) {
+//                    person = new Person();
+//                    person.setPerson_id(rs.getLong("person_id"));
+//                    person.setName(rs.getString("name"));
+//                    person.setAge(rs.getInt("age"));
+//                    person.setEmail(rs.getString("email"));
+//                    person.setAddress(rs.getString("address"));
+//                }
+//
+//                Long copyId = rs.getObject("copy_id", Long.class);
+//                if (copyId != null) {
+//                    BookCopy copy = new BookCopy();
+//                    copy.setCopy_id(copyId);
+//                    copy.setAvailable(rs.getBoolean("is_available"));
+//
+//                    books.add(copy);
+//                }
+//            }
+//
+//            if (person != null) {
+//                person.setBooks(books);
+//            }
+//
+//            return person == null ? List.of() : List.of(person);
+//        }, person_id);
+//
+//        return result.stream().findFirst();
+//    }
+
+    @Override
+    public Optional<Person> findByPersonId(Long person_id) {
+        String sql = """
+        SELECT 
+            p.person_id, p.person_media_id, p.name, p.age, p.email, p.address,
+
+            bc.copy_id, bc.is_available, bc.created_at, bc.updated_at,
+            b.book_id, b.title AS book_title, b.author AS book_author, b.year AS book_year
+
+        FROM person p
+        LEFT JOIN book_copy bc ON bc.person_id = p.person_id
+        LEFT JOIN book b ON bc.book_id = b.book_id
+
+        WHERE p.person_id = ?
+        """;
+
+        List<Person> result = jdbcTemplate.query(sql, rs -> {
+            Person person = null;
+            List<BookCopy> books = new ArrayList<>();
+
+            while (rs.next()) {
+                if (person == null) {
+                    person = new Person();
+                    person.setPersonId(rs.getLong("person_id"));
+                    person.setPersonMediaId(rs.getString("person_media_id"));
+                    person.setName(rs.getString("name"));
+                    person.setAge(rs.getInt("age"));
+                    person.setEmail(rs.getString("email"));
+                    person.setAddress(rs.getString("address"));
+                }
+
+                Long copyId = rs.getObject("copy_id", Long.class);
+                if (copyId != null) {
+                    BookCopy copy = new BookCopy();
+                    copy.setBookCopyId(copyId);
+                    copy.setAvailable(rs.getBoolean("is_available"));
+                    copy.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                    copy.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+
+                    Book book = new Book();
+                    book.setBookId(rs.getLong("book_id"));
+                    book.setTitle(rs.getString("book_title"));
+                    book.setAuthor(rs.getString("book_author"));
+                    book.setYear(rs.getInt("book_year"));
+                    copy.setBook(book);
+
+                    books.add(copy);
+                }
+            }
+
+            if (person != null) {
+                person.setBooks(books);
+            }
+
+            return person == null ? List.of() : List.of(person);
+        }, person_id);
+
+        return result.stream().findFirst();
     }
+
 
     public Optional<Person> findByEmail(String email) {
         String sql = "SELECT * FROM person WHERE email = ?";
@@ -64,22 +176,34 @@ public class PersonJdbcTemplateRepository implements PersonRepository {
     }
 
     public void save(Person person) {
-        String sql = "INSERT INTO person(name, age, email, address) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(sql,
-                person.getName(),
-                person.getAge(),
-                person.getEmail(),
-                person.getAddress());
+        String sql = "INSERT INTO person(person_media_id, name, age, email, address) VALUES (?, ?, ?, ?, ?)";
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[] { "person_id" });
+            ps.setString(1, person.getPersonMediaId());
+            ps.setString(2, person.getName());
+            ps.setInt(3, person.getAge());
+            ps.setString(4, person.getEmail());
+            ps.setString(5, person.getAddress());
+            return ps;
+        }, keyHolder);
+
+        Number key = keyHolder.getKey();
+        if (key != null) {
+            person.setPersonId(key.longValue());
+        }
     }
 
     public void update(Person person) {
         String sql = "UPDATE person SET name = ?, age = ?, email = ?, address = ? WHERE person_id = ?";
         jdbcTemplate.update(sql,
-                person.getName(),
-                person.getAge(),
-                person.getEmail(),
-                person.getAddress(),
-                person.getPerson_id());
+            person.getName(),
+            person.getAge(),
+            person.getEmail(),
+            person.getAddress(),
+            person.getPersonId());
     }
 
     public void delete(Long id) {
@@ -87,24 +211,24 @@ public class PersonJdbcTemplateRepository implements PersonRepository {
             String sql = "DELETE FROM person WHERE person_id = ?";
             jdbcTemplate.update(sql, id);
         } catch (Exception e) {
-             throw new PersonNotDeletedException(id);
+            throw new PersonNotDeletedException(id);
         }
     }
 
     @Override
     @Transactional
     public void butchSaveAll(List<Person> people) {
-        String sql = "INSERT INTO person(name, age, email, address) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO person(person_media_id, name, age, email, address) VALUES (?, ?, ?, ?, ?)";
 
         try {
             int[][] updateCounts = jdbcTemplate.batchUpdate(sql, people, 1000, (ps, person) -> {
-                ps.setString(1, person.getName());
-                ps.setInt(2, person.getAge());
-                ps.setString(3, person.getEmail());
-                ps.setString(4, person.getAddress());
+                ps.setString(1, person.getPersonMediaId());
+                ps.setString(2, person.getName());
+                ps.setInt(3, person.getAge());
+                ps.setString(4, person.getEmail());
+                ps.setString(5, person.getAddress());
             });
 
-            // Подсчёт общего количества вставленных строк
             int totalInserted = Arrays.stream(updateCounts)
                 .flatMapToInt(IntStream::of)
                 .sum();
@@ -126,6 +250,7 @@ public class PersonJdbcTemplateRepository implements PersonRepository {
     // This is an object that maps rows from the table to our Person entity.
     private final RowMapper<Person> personRowMapper = (rs, rowNum) -> new Person(
         rs.getLong("person_id"),
+        rs.getString("person_media_id"),
         rs.getString("name"),
         rs.getInt("age"),
         rs.getString("email"),

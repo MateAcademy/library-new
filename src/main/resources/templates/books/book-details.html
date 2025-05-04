@@ -17,37 +17,37 @@
             padding: 20px;
         }
 
+        h1, h2 {
+            color: #333;
+        }
+
         .card {
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            width: 400px;
+            padding: 30px;
+            width: 450px;
             margin: 20px auto;
             text-align: left;
-            transition: transform 0.3s ease;
         }
 
-        .card:hover {
-            transform: scale(1.05);
+        p, li, label, select {
+            font-size: 16px;
+            color: #333;
         }
 
-        h1, h2 {
-            color: white;
+        ul {
+            list-style: none;
+            padding: 0;
         }
 
-        p {
-            font-size: 18px;
-            color: #555;
-        }
-
-        strong {
-            color: #000;
+        li {
+            margin-bottom: 20px;
         }
 
         .btn {
             display: inline-block;
-            margin: 10px 5px;
+            margin: 10px 5px 0 0;
             padding: 10px 20px;
             font-size: 16px;
             color: white;
@@ -55,6 +55,7 @@
             border: none;
             border-radius: 6px;
             text-decoration: none;
+            cursor: pointer;
             transition: background 0.3s;
         }
 
@@ -78,15 +79,12 @@
             background: #218838;
         }
 
-        .select-group {
-            margin-top: 20px;
-            text-align: center;
-        }
-
         select {
+            width: 100%;
             padding: 8px;
-            font-size: 16px;
+            margin-top: 5px;
             border-radius: 6px;
+            border: 1px solid #ccc;
         }
 
         .back-button {
@@ -106,13 +104,13 @@
             background: #0056b3;
             transform: scale(1.05);
         }
-
     </style>
 </head>
 <body>
 
 <h1 class="back-button">📖 Данные о книге</h1>
 
+<!-- Основная информация о книге -->
 <div class="card">
     <p><strong>ID:</strong> <span th:text="${book.book_id}"></span></p>
     <p><strong>Название:</strong> <span th:text="${book.title}"></span></p>
@@ -120,44 +118,49 @@
     <p><strong>Год издания:</strong> <span th:text="${book.year}"></span></p>
 </div>
 
-<!-- Если книга свободна -->
-<div class="card">
-    <div th:if="${book.getOwner() == null}">
-        <h2 style="color: black;">✅ Книга в библиотеке и свободна</h2>
+<!-- Экземпляры книги -->
+<h2 style="color: white;">📦 Экземпляры книги</h2>
+<div th:if="${copies.isEmpty()}" class="card">
+    <p>Нет экземпляров этой книги.</p>
+</div>
 
-        <div class="select-group">
-            <form th:action="@{/admin/books/assign}" method="post">
-                <input type="hidden" name="bookId" th:value="${book.book_id}"/>
-                <label for="person">Кому назначить книгу?</label><br>
-                <select name="personId" id="person" required>
-                    <option value="" disabled selected>Выберите человека</option>
-                    <option th:each="person : ${people}"
-                            th:value="${person.person_id}"
-                            th:text="${person.name}"></option>
-                </select><br>
-                <button class="btn btn-green" type="submit">Назначить книгу</button>
-            </form>
-        </div>
+<div th:each="copy : ${copies}" class="card">
+    <p><strong>ID экземпляра:</strong> <span th:text="${copy.copy_id}"></span></p>
+    <p>
+        <strong>Статус:</strong>
+        <span th:if="${copy.owner == null}">Свободен</span>
+        <span th:if="${copy.owner != null}">У <span th:text="${copy.owner.name}"></span></span>
+    </p>
+
+    <div th:if="${copy.owner == null}">
+        <form th:action="@{/admin/book-copies/assign}" method="post">
+            <input type="hidden" name="copyId" th:value="${copy.copy_id}"/>
+            <label>Назначить человеку:</label>
+            <select name="personId" required>
+                <option value="" disabled selected>Выберите человека</option>
+                <option th:each="person : ${people}"
+                        th:value="${person.personId}"
+                        th:text="${person.name}"></option>
+            </select>
+            <button class="btn btn-green" type="submit">Назначить</button>
+        </form>
     </div>
 
-    <!-- Если книгу кто-то взял -->
-    <div th:if="${book.getOwner() != null}">
-        <h2 style="color: black;">📚 Книга сейчас у: <span th:text="${book_personName}">ФИО</span></h2>
-
-        <form th:action="@{/admin/books/unassign}" method="post" style="margin-top: 15px;">
-            <input type="hidden" name="bookId" th:value="${book.book_id}"/>
-            <button type="submit" class="btn btn-danger">Освободить книгу</button>
+    <div th:if="${copy.owner != null}">
+        <form th:action="@{/admin/book-copies/unassign}" method="post">
+            <input type="hidden" name="copyId" th:value="${copy.copy_id}"/>
+            <button class="btn btn-danger" type="submit">Освободить</button>
         </form>
     </div>
 </div>
 
-<!-- Управляющие кнопки -->
+
 <div style="margin-top: 30px;">
-    <a th:href="@{/admin/books/{id}/edit(id=${book.book_id})}" class="btn">✏️ Редактировать</a>
+    <a th:href="@{/admin/books/{id}/edit(id=${book.book_id})}" class="btn">✏️ Редактировать книгу</a>
 
     <form th:action="@{/admin/books/{id}(id=${book.book_id})}" method="post" style="display:inline;">
         <input type="hidden" name="_method" value="delete"/>
-        <button type="submit" class="btn btn-danger">❌ Удалить</button>
+        <button type="submit" class="btn btn-danger">❌ Удалить книгу</button>
     </form>
 </div>
 

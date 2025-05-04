@@ -4,10 +4,15 @@ import com.example.demo.dto.BookResponse;
 import com.example.demo.errors.BookNotDeletedException;
 import com.example.demo.errors.BookNotFoundException;
 import com.example.demo.models.Book;
+import com.example.demo.models.BookCopy;
+import com.example.demo.repository.book.BookCopyRepository;
 import com.example.demo.repository.book.BookRepository;
 import com.example.demo.utils.mappers.BookMapper;
+import jakarta.transaction.Transactional;
+import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -17,12 +22,17 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookService {
 
     final BookRepository bookRepository;
+    final BookCopyRepository bookCopyRepository;
+
     final BookMapper bookMapper;
 
     public List<BookResponse> getAllBooks() {
@@ -41,12 +51,19 @@ public class BookService {
         return bookRepository.findById(id);
     }
 
-    public List<Book> getBooksByPersonId(Long personId) {
-        return bookRepository.findByPersonId(personId);
-    }
-
-    public void save(@NonNull Book book) {
+    @Transactional
+    public void saveWithCopies(Book book, int copyCount) {
         bookRepository.save(book);
+
+        List<BookCopy> copies = IntStream.range(0, copyCount)
+            .mapToObj(i -> {
+                BookCopy copy = new BookCopy();
+                copy.setBook(book);
+                return copy;
+            })
+            .collect(Collectors.toList());
+
+        bookCopyRepository.saveAll(copies);
     }
 
     public void update(@NonNull Integer id, @NonNull Book updatedBook) {
@@ -101,9 +118,9 @@ public class BookService {
 
     private List<Book> get1000Books() {
         List<Book> books = new ArrayList<>();
-        for (int i = 1; i <= 1000; i++) {
-            books.add(new Book("book_" + i, "author_" + i, 2000, null));
-        }
+//        for (int i = 1; i <= 1000; i++) {
+//            books.add(new Book("book_" + i, "author_" + i, 2000));
+//        }
         return books;
     }
 }
