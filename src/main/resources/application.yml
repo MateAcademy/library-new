@@ -12,6 +12,9 @@ spring:
     init:
       mode: ${MODE}
       schema-locations: ${SCHEMA_LOCATIONS}
+  output:
+    ansi:
+      enabled: always
 
   datasource:
     url: ${DB_URL}
@@ -32,5 +35,15 @@ springdoc:
     tagsSorter: alpha
     display-request-duration: true
 
-
+logging:
+  level:
+    root: ERROR # или INFO, DEBUG
+    com.example.demo: DEBUG # для твоих классов
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %level - %logger{36} - %msg%n"
+  file:
+    name: logs/app.log
+  charset:
+    console: UTF-8
+    file: UTF-8
 

@@ -25,6 +25,11 @@ public class PersonJdbcRepository implements PersonRepository {
     final PostgresConnector postgresConnector;
 
     @Override
+    public Optional<Person> findByEmailAndPassword(String email, String password) {
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<Long> findMaxPersonId() {
         return Optional.empty();
     }

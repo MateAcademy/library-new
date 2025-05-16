@@ -2,7 +2,7 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Обновление данных книги</title>
+  <title>Updating book data</title>
   <style>
     body {
       background-image: url('/fon/pexels-minan1398.jpg');
@@ -12,7 +12,6 @@
       background-attachment: fixed;
 
       font-family: Arial, sans-serif;
-      /*background-color: #f4f4f4;*/
       text-align: center;
       margin: 0;
       padding: 20px;
@@ -120,9 +119,9 @@
 
 <h1 class="back-button">Обновление книги</h1>
 
-<form th:action="@{'/admin/books/' + ${book.getBook_id()}}" th:object="${book}" th:method="patch">
+<form th:action="@{'/admin/books/' + ${book.bookId}}" th:object="${book}" th:method="patch">
   <label>ID (нельзя изменить):</label>
-  <input type="text" th:field="*{book_id}" readonly/>
+  <input type="text" th:field="*{bookId}" readonly/>
 
   <label>Title:</label>
   <input type="text" th:field="*{title}" required/>

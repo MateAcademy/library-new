@@ -62,8 +62,9 @@
 <body>
 <div class="not-found-container">
   <h1>❌ Книга не была удалена</h1>
-  <p>Возможно нет такой книги в БД.</p>
+  <p th:text="${errorMessage}">Произошла ошибка при удалении книги.</p>
   <a href="javascript:history.back()" class="btn-back">⬅ Вернуться назад</a>
 </div>
 </body>
+
 </html>

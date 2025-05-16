@@ -1,19 +1,22 @@
 package com.example.demo.controller.admin;
 
+import com.example.demo.models.Book;
+import com.example.demo.models.BookCopy;
 import com.example.demo.service.BookCopyService;
 import com.example.demo.service.BookService;
 import com.example.demo.service.PeopleService;
-import com.example.demo.utils.validators.BookValidator;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @Controller
-@RequestMapping("admin/books")
+@RequestMapping("admin/book-copy")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookCopyController {
@@ -21,20 +24,36 @@ public class BookCopyController {
     final BookService bookService;
     final BookCopyService bookCopyService;
     final PeopleService peopleService;
-    final BookValidator bookValidator;
 
-    @PostMapping("/unassign")
-    public String unassignBook(@RequestParam("bookId") Long bookId) {
-        bookService.unassignBook(bookId);
-        return "redirect:/admin/books/" + bookId;
+
+    @GetMapping("{bookId}")
+    public String showBookCopyById(@PathVariable Long bookId, Model model) {
+        Optional<Book> bookOpt = bookService.getBookById(bookId);
+
+        if (bookOpt.isEmpty()) {
+            return "/admin/book-not-found";
+        }
+
+        Book book = bookOpt.get();
+        List<BookCopy> copies = bookCopyService.getCopiesByBookId(book.getBookId());
+
+        model.addAttribute("book", book);
+        model.addAttribute("copies", copies);
+        model.addAttribute("people", peopleService.getAllPeople());
+
+        return "/books/book-details";
     }
 
     @PostMapping("/assign")
-    public String assignBook(@RequestParam("bookId") Long bookId,
-                             @RequestParam("personId") Long personId) {
-        bookService.assignBook(bookId, personId);
-        return "redirect:/admin/books/" + bookId;
+    public String assignBook(@RequestParam Long copyId, @RequestParam Long bookId, @RequestParam Long personId) {
+        bookCopyService.assignBook(copyId, personId);
+        return "redirect:/admin/book-copy/" + bookId;
     }
 
 
+    @PostMapping("/unassign")
+    public String unassignBook(@RequestParam Long copyId, @RequestParam("bookId") Long bookId) {
+        bookCopyService.unassignBook(copyId);
+        return "redirect:/admin/book-copy/" + bookId;
+    }
 }

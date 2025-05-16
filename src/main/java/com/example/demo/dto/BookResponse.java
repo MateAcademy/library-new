@@ -12,20 +12,18 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookResponse {
 
-    Long book_id;
+    Long bookId;
     String title;
     String author;
     Integer year;
     int totalCopies;
-    int availableCopies;
 
 
-    public BookResponse(Long book_id, String title, String author, Integer year) {
-        this.book_id = book_id;
+    public BookResponse(Long bookId, String title, String author, Integer year) {
+        this.bookId = bookId;
         this.title = title;
         this.author = author;
         this.year = year;
         this.totalCopies = 0;
-        this.availableCopies = 0;
     }
 }

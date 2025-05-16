@@ -5,6 +5,8 @@ import com.example.demo.errors.BookNotDeletedException;
 import com.example.demo.errors.BookNotFoundException;
 import com.example.demo.models.Book;
 import com.example.demo.models.BookCopy;
+import com.example.demo.notification.ClientRequestException;
+import com.example.demo.notification.ExceptionMessage;
 import com.example.demo.repository.book.BookCopyRepository;
 import com.example.demo.repository.book.BookRepository;
 import com.example.demo.utils.mappers.BookMapper;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,19 +35,27 @@ public class BookService {
 
     final BookRepository bookRepository;
     final BookCopyRepository bookCopyRepository;
-
     final BookMapper bookMapper;
 
-    public List<BookResponse> getAllBooks() {
-        List<Book> books = bookRepository.findAll();
-        return bookMapper.mapToBookResponseList(books);
-    }
 
     public Page<BookResponse> getBooksPage(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Book> booksPage = bookRepository.findAll(pageable);
-        List<BookResponse> responses = bookMapper.mapToBookResponseList(booksPage.getContent());
-        return new PageImpl<>(responses, pageable, booksPage.getTotalElements());
+        Page<Book> books = bookRepository.findAll(pageable);
+
+        List<BookResponse> responses = books.getContent().stream()
+            .map(book -> {
+                int copies = bookCopyRepository.countByBookId(book.getBookId());
+                return new BookResponse(
+                    book.getBookId(),
+                    book.getTitle(),
+                    book.getAuthor(),
+                    book.getYear(),
+                    copies
+                );
+            })
+            .toList();
+
+        return new PageImpl<>(responses, books.getPageable(), books.getTotalElements());
     }
 
     public Optional<Book> getBookById(@NonNull Long id) {
@@ -73,27 +84,31 @@ public class BookService {
     public void delete(@NonNull Long id) {
         Optional<Book> bookById = bookRepository.findById(id);
 
-        if (bookById.isPresent()) {
-            bookRepository.delete(id);
-        } else {
-            throw new BookNotDeletedException(id);
+        if (bookById.isEmpty()) {
+            //throw new BookNotDeletedException("There is no such book in the database with id= " + id);
+            try{
+                throw new IOException("test");
+            } catch (IOException ex) {
+                throw new ClientRequestException(ExceptionMessage.EXCEPTION_IMPORT_FILE_READ_FAILED, ex, 3L);
+                //throw new IllegalStateException(ExceptionMessage.EXCEPTION_IMPORT_FILE_READ_FAILED.name(), ex);
+            }
+
         }
+
+        List<BookCopy> allCopies = bookCopyRepository.findAllWithOwnerByBookId(id);
+
+        boolean anyAssigned = allCopies.stream()
+            .anyMatch(copy -> copy.getOwner() != null);
+
+        if (anyAssigned) {
+            throw new BookNotDeletedException("Unable to delete book: there are checked out copies");
+        }
+
+        bookRepository.delete(id);
     }
 
-    public BookResponse findBooksByTitle(@NonNull String title) {
-        Optional<Book> byTitle = bookRepository.findByTitle(title);
-        if (byTitle.isPresent()) {
-            return bookMapper.mapToBookResponse(byTitle.get());
-        } else throw new BookNotFoundException(title);
-
-    }
-
-    public void unassignBook(Long bookId) {
-        bookRepository.unassignBook(bookId);
-    }
-
-    public void assignBook(Long bookId, Long personId) {
-        bookRepository.assignBook(bookId, personId);
+    public Optional<Book> findByTitle(String title) {
+        return bookRepository.findByTitle(title);
     }
 
     public void insert1000Books() {

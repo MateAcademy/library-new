@@ -3,6 +3,7 @@ package com.example.demo.repository.person.impl;
 import com.example.demo.errors.PersonNotDeletedException;
 import com.example.demo.models.Book;
 import com.example.demo.models.BookCopy;
+import com.example.demo.models.Library;
 import com.example.demo.models.Person;
 import com.example.demo.repository.person.PersonRepository;
 import lombok.AccessLevel;
@@ -22,10 +23,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.IntStream;
 
 @Repository
@@ -35,6 +33,64 @@ import java.util.stream.IntStream;
 public class PersonJdbcTemplateRepository implements PersonRepository {
 
     final JdbcTemplate jdbcTemplate;
+
+    @Override
+    public Optional<Person> findByEmailAndPassword(String email, String password) {
+        String sql = """
+        SELECT 
+            p.person_id,
+            p.person_media_id,
+            p.name,
+            p.age,
+            p.email,
+            p.password,
+            p.address,
+            
+            l.library_id,
+            l.name AS library_name,
+            l.address AS library_address
+
+        FROM person p
+        LEFT JOIN person_library pl ON p.person_id = pl.person_id
+        LEFT JOIN library l ON pl.library_id = l.library_id
+        WHERE p.email = ? AND p.password = ?
+        """;
+
+        List<Person> result = jdbcTemplate.query(sql, rs -> {
+            Person person = null;
+            Set<Library> libraries = new HashSet<>();
+
+            while (rs.next()) {
+                if (person == null) {
+                    person = new Person();
+                    person.setPersonId(rs.getLong("person_id"));
+                    person.setPersonMediaId(rs.getString("person_media_id"));
+                    person.setName(rs.getString("name"));
+                    person.setAge(rs.getInt("age"));
+                    person.setEmail(rs.getString("email"));
+                    person.setPassword(rs.getString("password"));
+                    person.setAddress(rs.getString("address"));
+                }
+
+                Long libraryId = rs.getObject("library_id", Long.class);
+                if (libraryId != null) {
+                    Library library = new Library();
+                    library.setLibraryId(libraryId);
+                    library.setName(rs.getString("library_name"));
+                    library.setAddress(rs.getString("library_address"));
+                    libraries.add(library);
+                }
+            }
+
+            if (person != null) {
+                person.setLibraries(libraries);
+            }
+
+            return person == null ? List.of() : List.of(person);
+        }, email, password);
+
+        return result.stream().findFirst();
+    }
 
     @Override
     public Optional<Long> findMaxPersonId() {
@@ -62,51 +118,6 @@ public class PersonJdbcTemplateRepository implements PersonRepository {
 
         return new PageImpl<>(people, pageable, total);
     }
-
-//    @Override
-//    public Optional<Person> findByPersonId(Long person_id) {
-//        String sql = """
-//            SELECT
-//                p.person_id, p.name, p.age, p.email, p.address,
-//                bc.copy_id, bc.is_available
-//            FROM person p
-//            LEFT JOIN book_copy bc ON bc.person_id = p.person_id
-//            WHERE p.person_id = ?
-//            """;
-//
-//        List<Person> result = jdbcTemplate.query(sql, rs -> {
-//            Person person = null;
-//            List<BookCopy> books = new ArrayList<>();
-//
-//            while (rs.next()) {
-//                if (person == null) {
-//                    person = new Person();
-//                    person.setPerson_id(rs.getLong("person_id"));
-//                    person.setName(rs.getString("name"));
-//                    person.setAge(rs.getInt("age"));
-//                    person.setEmail(rs.getString("email"));
-//                    person.setAddress(rs.getString("address"));
-//                }
-//
-//                Long copyId = rs.getObject("copy_id", Long.class);
-//                if (copyId != null) {
-//                    BookCopy copy = new BookCopy();
-//                    copy.setCopy_id(copyId);
-//                    copy.setAvailable(rs.getBoolean("is_available"));
-//
-//                    books.add(copy);
-//                }
-//            }
-//
-//            if (person != null) {
-//                person.setBooks(books);
-//            }
-//
-//            return person == null ? List.of() : List.of(person);
-//        }, person_id);
-//
-//        return result.stream().findFirst();
-//    }
 
     @Override
     public Optional<Person> findByPersonId(Long person_id) {

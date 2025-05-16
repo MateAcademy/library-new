@@ -22,7 +22,12 @@ public class BookCopyService {
         return bookCopyRepository.findAllWithOwnerByBookId(bookId);
     }
 
-    public List<BookCopy> findByPersonId(Long personId) {
-        return bookCopyRepository.findByPersonId(personId).orElse(null);
+    public void assignBook(Long copyId, Long personId) {
+        bookCopyRepository.assignBookCopy(copyId, personId);
+    }
+
+
+    public void unassignBook(Long copyId) {
+        bookCopyRepository.unassignBookCopy(copyId);
     }
 }

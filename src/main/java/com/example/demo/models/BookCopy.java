@@ -36,5 +36,4 @@ public class BookCopy {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
-
 }

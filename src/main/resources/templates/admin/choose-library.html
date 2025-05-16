@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Выбор библиотеки</title>
+    <style>
+        body {
+            background-image: url('/fon/pexels-minan1398.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-attachment: fixed;
+
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            text-align: center;
+
+            background-image: url('/fon/blue.jpg'); /* 🔸 путь к фону */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: rgba(255, 255, 255, 0.8); /* fallback-подложка с полупрозрачностью */
+            /*max-width: 960px;*/
+            /*margin: 0 auto;*/
+            /*padding: 30px;*/
+            /*border-radius: 12px;*/
+            /*box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);*/
+            /*text-align: center;*/
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            color: #007bff;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .library-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .library-button {
+            flex: 0 1 calc(30% - 10px); /* три в ряд (плюс отступы) */
+            height: 150px;
+            background-color: #e9ecef;
+            background-size: cover;
+            background-position: center;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        }
+
+        .library-button:hover {
+            filter: brightness(1.1);
+        }
+
+        .library-button.selected {
+            border-color: #007bff;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.6);
+        }
+
+        .btn-submit {
+            margin-top: 30px;
+            padding: 14px 28px;
+            font-size: 18px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Выбор библиотеки</h1>
+
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+
+    <form method="post" action="/select-library" id="libraryForm">
+        <input type="hidden" name="libraryId" id="selectedLibraryId"/>
+
+        <div class="library-grid">
+            <div class="library-button"
+                 th:each="lib : ${libraries}"
+                 th:text="${lib.name}"
+                 th:data-id="${lib.libraryId}"
+                 th:style="'background-image: url(/images/library-' + ${lib.libraryId} + '.jpg);'"
+                 onclick="selectLibrary(this)">
+            </div>
+        </div>
+
+        <button type="submit" class="btn-submit">📚 Войти</button>
+    </form>
+</div>
+
+<script>
+    function selectLibrary(element) {
+        // Убираем выделение со всех кнопок
+        document.querySelectorAll('.library-button').forEach(el => el.classList.remove('selected'));
+
+        // Отмечаем выбранную
+        element.classList.add('selected');
+
+        // Передаём ID в hidden input
+        const id = element.getAttribute('data-id');
+        document.getElementById('selectedLibraryId').value = id;
+    }
+</script>
+
+</body>
+</html>

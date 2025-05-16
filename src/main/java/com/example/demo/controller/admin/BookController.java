@@ -37,44 +37,20 @@ import java.util.Optional;
 public class BookController {
 
     final BookService bookService;
-    final BookCopyService bookCopyService;
-    final PeopleService peopleService;
     final BookValidator bookValidator;
 
-//    @GetMapping
-//    public String index(Model model) {
-//        List<BookResponse> allBooks = bookService.getAllBooks();
-//        model.addAttribute("books", allBooks);
-//        return "books/all-books";
-//    }
 
     @GetMapping
     public String index(@RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "20") int size,
                         Model model) {
-        Page<BookResponse> peoplePage = bookService.getBooksPage(page, size);
-        model.addAttribute("books", peoplePage.getContent());
+        Page<BookResponse> booksPage = bookService.getBooksPage(page, size);
+
+
+        model.addAttribute("books", booksPage.getContent());
         model.addAttribute("currentPage", page);
-        model.addAttribute("hasNext", peoplePage.hasNext());
+        model.addAttribute("hasNext", booksPage.hasNext());
         return "/books/all-books";
-    }
-
-    @GetMapping("{book_id}")
-    public String showBookCopysById(@PathVariable Long book_id, Model model) {
-        Optional<Book > bookOpt = bookService.getBookById(book_id);
-
-        if (bookOpt.isEmpty()) {
-            return "/admin/book-not-found";
-        }
-
-        Book book = bookOpt.get();
-        List<BookCopy> copies = bookCopyService.getCopiesByBookId(book.getBookId());
-
-        model.addAttribute("book", book);
-        model.addAttribute("copies", copies);
-        model.addAttribute("people", peopleService.getAllPeople());
-
-        return "/books/book-details";
     }
 
     @GetMapping("new")
@@ -129,33 +105,25 @@ public class BookController {
 
     @GetMapping("search")
     public String search(@RequestParam("title") String title, Model model) {
-        BookResponse foundBooks = bookService.findBooksByTitle(title);
-        model.addAttribute("books", foundBooks);
-        return "/books/all-books"; // можно сделать отдельный шаблон "search-result"
+        Optional<Book> bookOpt = bookService.findByTitle(title);
+        if (bookOpt.isEmpty()) {
+            model.addAttribute("notFound", true);
+            return "/books/search-form";
+        }
+
+        model.addAttribute("book", bookOpt.get());
+        return "/books/book-details";
     }
 
-//    @PostMapping("/unassign")
-//    public String unassignBook(@RequestParam("bookId") Long bookId) {
-//        bookService.unassignBook(bookId);
-//        return "redirect:/admin/books/" + bookId;
+//    @GetMapping("insert1000People")
+//    public String insert1000Books() {
+//        bookService.insert1000Books();
+//        return "/admin/books";
 //    }
 //
-//    @PostMapping("/assign")
-//    public String assignBook(@RequestParam("bookId") Long bookId,
-//                             @RequestParam("personId") Long personId) {
-//        bookService.assignBook(bookId, personId);
-//        return "redirect:/admin/books/" + bookId;
+//    @GetMapping("butch_insert1000People")
+//    public String butch_insert1000Books() {
+//        bookService.batchInsert1000Books();
+//        return "/admin/people";
 //    }
-
-    @GetMapping("insert1000People")
-    public String insert1000Books() {
-        bookService.insert1000Books();
-        return "/admin/books";
-    }
-
-    @GetMapping("butch_insert1000People")
-    public String butch_insert1000Books() {
-        bookService.batchInsert1000Books();
-        return "/admin/people";
-    }
 }

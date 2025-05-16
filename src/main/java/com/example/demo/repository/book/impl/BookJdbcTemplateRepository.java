@@ -1,5 +1,8 @@
 package com.example.demo.repository.book.impl;
 
+import com.example.demo.dto.BookCopyDto;
+import com.example.demo.dto.BookDto;
+import com.example.demo.dto.PersonDto;
 import com.example.demo.models.Book;
 import com.example.demo.models.BookCopy;
 import com.example.demo.models.Person;
@@ -14,9 +17,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -29,11 +36,6 @@ import java.util.stream.IntStream;
 public class BookJdbcTemplateRepository implements BookRepository {
 
     final JdbcTemplate jdbcTemplate;
-
-    public List<Book> findAll() {
-        String sql = "SELECT * FROM book";
-        return jdbcTemplate.query(sql, bookRowMapper);
-    }
 
     @Override
     public Page<Book> findAll(Pageable pageable) {
@@ -72,13 +74,67 @@ public class BookJdbcTemplateRepository implements BookRepository {
     }
 
 
+    public Optional<BookDto> findBookDtoById(Long bookId) {
+        String sql = """
+        SELECT 
+            b.book_id, b.title, b.author, b.year,
+            bc.copy_id, bc.is_available, bc.created_at, bc.updated_at,
+            p.person_id, p.name AS p_name, p.person_media_id
+        FROM book b
+        LEFT JOIN book_copy bc ON bc.book_id = b.book_id
+        LEFT JOIN person p ON p.person_id = bc.person_id
+        WHERE b.book_id = ?
+        ORDER BY bc.copy_id
+    """;
+
+        List<BookDto> query = jdbcTemplate.query(sql, rs -> {
+            BookDto bookDto = null;
+            List<BookCopyDto> copies = new ArrayList<>();
+
+            while (rs.next()) {
+                if (bookDto == null) {
+                    bookDto = new BookDto();
+                    bookDto.setBookId(rs.getLong("book_id"));
+                    bookDto.setTitle(rs.getString("title"));
+                    bookDto.setAuthor(rs.getString("author"));
+                    bookDto.setYear(rs.getInt("year"));
+                    bookDto.setCopies(copies);
+                }
+
+                Long copyId = rs.getObject("book_copy_id", Long.class);
+                if (copyId != null) {
+                    BookCopyDto copyDto = new BookCopyDto();
+                    copyDto.setBookCopyId(copyId);
+                    copyDto.setAvailable(rs.getBoolean("is_available"));
+                    copyDto.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
+                    copyDto.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+
+                    Long personId = rs.getObject("person_id", Long.class);
+                    if (personId != null) {
+                        PersonDto person = new PersonDto(
+                            personId,
+                            rs.getString("p_name"),
+                            rs.getString("person_media_id")
+                        );
+                        copyDto.setOwner(person);
+                    }
+
+                    copies.add(copyDto);
+                }
+            }
+
+            return bookDto == null ? List.of() : List.of(bookDto);
+        }, bookId);
+
+        return query.stream().findFirst();
+    }
+
     public Optional<Book> findById(long book_id) {
         String sql = "SELECT * FROM book WHERE book_id = ?";
         List<Book> books = jdbcTemplate.query(sql, bookRowMapper, book_id);
-        //todo: you can return an error that a person with such an ID was simply not found
         return books.stream().findFirst();
     }
-
+    
     public Optional<Book> findByTitle(String title) {
         String sql = "SELECT * FROM book WHERE title = ?";
         List<Book> people = jdbcTemplate.query(sql, bookRowMapper, title);
@@ -87,20 +143,30 @@ public class BookJdbcTemplateRepository implements BookRepository {
 
     public void save(Book book) {
         String sql = "INSERT INTO book(title, author, year) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql,
-            book.getTitle(),
-            book.getAuthor(),
-            book.getYear());
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[] { "book_id" });
+            ps.setString(1, book.getTitle());
+            ps.setString(2, book.getAuthor());
+            ps.setInt(3, book.getYear());
+            return ps;
+        }, keyHolder);
+
+        Number key = keyHolder.getKey();
+        if (key != null) {
+            book.setBookId(key.longValue());
+        }
     }
 
     public void update(Book book) {
-//        String sql = "UPDATE book SET title = ?, author = ?, year = ?, person_id = ? WHERE book_id = ?";
-//        jdbcTemplate.update(sql,
-//            book.getTitle(),
-//            book.getAuthor(),
-//            book.getYear(),
-//            book.getOwner() != null ? book.getOwner().getPerson_id() : null,
-//            book.getBook_id());
+        String sql = "UPDATE book SET title = ?, author = ?, year = ? WHERE book_id = ?";
+        jdbcTemplate.update(sql,
+            book.getTitle(),
+            book.getAuthor(),
+            book.getYear(),
+            book.getBookId());
     }
 
     public void delete(long id) {
@@ -135,15 +201,7 @@ public class BookJdbcTemplateRepository implements BookRepository {
 
 
 
-    public void unassignBook(Long bookId) {
-//        String sql = "UPDATE book SET person_id = NULL WHERE book_id = ?";
-//        jdbcTemplate.update(sql, bookId);
-    }
 
-    public void assignBook(Long bookId, Long personId) {
-//        String sql = "UPDATE book SET person_id = ? WHERE book_id = ?";
-//        jdbcTemplate.update(sql, personId, bookId);
-    }
 
     private final RowMapper<Book> bookRowMapper = (rs, rowNum) -> {
         Book book = new Book();

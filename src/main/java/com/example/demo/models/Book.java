@@ -51,5 +51,4 @@ public class Book {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
-
 }

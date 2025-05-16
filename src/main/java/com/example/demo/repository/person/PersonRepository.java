@@ -10,6 +10,7 @@ import java.util.Optional;
 
 public interface PersonRepository {
 
+    Optional<Person> findByEmailAndPassword(String email, String password);
     Optional<Long> findMaxPersonId();
     List<Person> findAll();
     Page<Person> findAll(Pageable pageable);

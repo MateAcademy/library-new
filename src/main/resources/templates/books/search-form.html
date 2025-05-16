@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Поиск книги</title>
+</head>
+<body>
+
+<h1>🔍 Поиск книги по названию</h1>
+
+<form th:action="@{/admin/books/search}" method="post">
+  <label>Название:</label>
+  <input type="text" name="title" required />
+  <button type="submit">Найти</button>
+</form>
+
+<div th:if="${notFound}">
+  <p style="color: red;">Книга с таким названием не найдена.</p>
+</div>
+
+</body>
+</html>

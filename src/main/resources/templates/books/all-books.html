@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Все книги</title>
+  <title>All books</title>
   <style>
     body {
       background-image: url('/fon/pexels-minan1398.jpg');
@@ -79,7 +79,10 @@
 
 <div class="container" id="bookContainer">
   <div class="card" th:each="book: ${books}">
-    <a th:href="@{/admin/books/{id}(id=${book.getBookId()})}" th:text="${book.getTitle()}">Название книги</a>
+    <a th:href="@{/admin/book-copy/{bookId}(bookId=${book.bookId})}" th:text="${book.title}">Название книги</a>
+    <p><strong>Автор:</strong> <span th:text="${book.author}"></span></p>
+    <p><strong>Год издания:</strong> <span th:text="${book.year}"></span></p>
+    <p><strong>Количество:</strong> <span th:text="${book.totalCopies}">0</span></p>
   </div>
 </div>
 

@@ -1,7 +1,6 @@
 package com.example.demo.repository.book;
 
 import com.example.demo.models.Book;
-import com.example.demo.models.Person;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -10,7 +9,6 @@ import java.util.Optional;
 
 public interface BookRepository {
 
-    List<Book> findAll();
     Page<Book> findAll(Pageable pageable);
     Optional<Book> findById(long bookId);
     Optional<Book> findByTitle(String title);
@@ -18,6 +16,5 @@ public interface BookRepository {
     void update(Book book);
     void delete(long book_id);
     void butchSaveAll(List<Book> books);
-    void unassignBook(Long bookId);
-    void assignBook(Long bookId, Long personId);
+
 }

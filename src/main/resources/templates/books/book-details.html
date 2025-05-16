@@ -2,7 +2,7 @@
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Информация о книге</title>
+    <title>Book Information</title>
     <style>
         body {
             background-image: url('/fon/pexels-minan1398.jpg');
@@ -110,31 +110,35 @@
 
 <h1 class="back-button">📖 Данные о книге</h1>
 
-<!-- Основная информация о книге -->
 <div class="card">
-    <p><strong>ID:</strong> <span th:text="${book.book_id}"></span></p>
+    <p><strong>ID:</strong> <span th:text="${book.bookId}"></span></p>
     <p><strong>Название:</strong> <span th:text="${book.title}"></span></p>
     <p><strong>Автор:</strong> <span th:text="${book.author}"></span></p>
     <p><strong>Год издания:</strong> <span th:text="${book.year}"></span></p>
 </div>
 
-<!-- Экземпляры книги -->
-<h2 style="color: white;">📦 Экземпляры книги</h2>
+<h2 class="btn" >📦 Экземпляры книги</h2>
 <div th:if="${copies.isEmpty()}" class="card">
     <p>Нет экземпляров этой книги.</p>
 </div>
 
 <div th:each="copy : ${copies}" class="card">
-    <p><strong>ID экземпляра:</strong> <span th:text="${copy.copy_id}"></span></p>
+    <p><strong>ID экземпляра:</strong> <span th:text="${copy.bookCopyId}"></span></p>
     <p>
         <strong>Статус:</strong>
         <span th:if="${copy.owner == null}">Свободен</span>
-        <span th:if="${copy.owner != null}">У <span th:text="${copy.owner.name}"></span></span>
+        <span th:if="${copy.owner != null}">
+        книга у
+        <span th:text="${copy.owner.name}">Имя</span>
+        (<span th:text="${copy.owner.personMediaId}">ID</span>)
+    </span>
     </p>
 
+
     <div th:if="${copy.owner == null}">
-        <form th:action="@{/admin/book-copies/assign}" method="post">
-            <input type="hidden" name="copyId" th:value="${copy.copy_id}"/>
+        <form th:action="@{/admin/book-copy/assign}" method="post">
+            <input type="hidden" name="copyId" th:value="${copy.bookCopyId}"/>
+            <input type="hidden" name="bookId" th:value="${copy.book.bookId}"/>
             <label>Назначить человеку:</label>
             <select name="personId" required>
                 <option value="" disabled selected>Выберите человека</option>
@@ -147,18 +151,18 @@
     </div>
 
     <div th:if="${copy.owner != null}">
-        <form th:action="@{/admin/book-copies/unassign}" method="post">
-            <input type="hidden" name="copyId" th:value="${copy.copy_id}"/>
+        <form th:action="@{/admin/book-copy/unassign}" method="post">
+            <input type="hidden" name="copyId" th:value="${copy.bookCopyId}"/>
+            <input type="hidden" name="bookId" th:value="${copy.book.bookId}"/>
             <button class="btn btn-danger" type="submit">Освободить</button>
         </form>
     </div>
 </div>
 
-
 <div style="margin-top: 30px;">
-    <a th:href="@{/admin/books/{id}/edit(id=${book.book_id})}" class="btn">✏️ Редактировать книгу</a>
+    <a th:href="@{/admin/books/{id}/edit(id=${book.bookId})}" class="btn">✏️ Редактировать книгу</a>
 
-    <form th:action="@{/admin/books/{id}(id=${book.book_id})}" method="post" style="display:inline;">
+    <form th:action="@{/admin/books/{id}(id=${book.bookId})}" method="post" style="display:inline;">
         <input type="hidden" name="_method" value="delete"/>
         <button type="submit" class="btn btn-danger">❌ Удалить книгу</button>
     </form>
