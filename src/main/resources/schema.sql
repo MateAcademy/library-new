@@ -63,9 +63,9 @@ CREATE TABLE IF NOT EXISTS library
 -- Данные библиотек
 INSERT INTO library (name, address)
 VALUES
-    ('Библиотека 1', 'Ukraine, Kyiv, 123456'),
-    ('Библиотека 2', 'Ukraine, Lviv, 654321'),
-    ('Библиотека 3', 'Ukraine, Lviv, 654321');
+    ('Библиотека 1  Киев Голосеевский район ', 'Ukraine, Kyiv, 123456'),
+    ('Библиотека 2 Киев Троещина', 'Ukraine, Lviv, 654321'),
+    ('Библиотека 3 Бровары', 'Ukraine, Lviv, 654321');
 
 -- Промежуточная таблица person_library (ManyToMany)
 CREATE TABLE IF NOT EXISTS person_library

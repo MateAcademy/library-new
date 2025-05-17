@@ -18,7 +18,7 @@ import static lombok.AccessLevel.PRIVATE;
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class LibraryJdbcTemplateRepository implements LibraryRepository {
 
-    JdbcTemplate jdbcTemplate;
+    final JdbcTemplate jdbcTemplate;
 
     private final RowMapper<Library> libraryRowMapper = (rs, rowNum) -> {
         Library lib = new Library();

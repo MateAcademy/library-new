@@ -30,7 +30,7 @@ public class LoginController {
     }
 
     @PostMapping("login")
-    public String login(@RequestParam("email") String email, @RequestParam("password") String password,   Model model, HttpSession session) {
+    public String login(@RequestParam("email") String email, @RequestParam("password") String password,  Model model, HttpSession session) {
         Optional<Person> userOpt = personRepository.findByEmailAndPassword(email, password);
 
         if (userOpt.isPresent()) {
@@ -45,7 +45,6 @@ public class LoginController {
 
             // Сохраняем текущего пользователя в сессию
             session.setAttribute("person", person);
-            session.setAttribute("email", person.getEmail());
             session.setAttribute("personLibraryIds", person.getLibraries()
                 .stream()
                 .map(Library::getLibraryId)
@@ -54,7 +53,7 @@ public class LoginController {
             List<Library> libraries = libraryRepository.findAll();
             model.addAttribute("libraries", libraries);
 
-            return "admin/choose-library"; // а не редирект
+            return "admin/choose-library";
         } else {
             model.addAttribute("error", "Неверный email или пароль");
             return "index";
@@ -62,7 +61,7 @@ public class LoginController {
     }
 
     @GetMapping("admin/main-person-page")
-    public String main_admin_page() {
+    public String mainAdminPage() {
         return "admin/main-person-page";
     }
 

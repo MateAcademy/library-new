@@ -44,9 +44,18 @@
         }
 
         .error {
-            color: red;
-            margin-bottom: 15px;
+            font-size: 20px;
             font-weight: bold;
+            color: #fff;
+            background-color: #dc3545; /* насыщенно-красный */
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin: 20px auto;
+            max-width: 500px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            border: 2px solid #a71d2a;
+            text-align: center;
+            animation: shake 0.3s ease-in-out 1;
         }
 
         .library-grid {
@@ -57,13 +66,13 @@
         }
 
         .library-button {
-            flex: 0 1 calc(30% - 10px); /* три в ряд (плюс отступы) */
+            flex: 0 1 calc(30% - 10px);
             height: 150px;
             background-color: #e9ecef;
             background-size: cover;
             background-position: center;
-            color: white;
-            font-size: 20px;
+            color: #fff; /* можно также попробовать #f8f9fa */
+            font-size: 22px;
             font-weight: bold;
             display: flex;
             align-items: center;
@@ -72,7 +81,10 @@
             cursor: pointer;
             border: 3px solid transparent;
             transition: all 0.3s ease;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+
+            text-shadow:
+                    2px 2px 4px rgba(0, 0, 0, 0.6),  /* тень снизу */
+                    -1px -1px 3px rgba(255, 255, 255, 0.2); /* небольшое высветление */
         }
 
         .library-button:hover {
@@ -99,41 +111,69 @@
         .btn-submit:hover {
             background: #218838;
         }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            50% { transform: translateX(4px); }
+            75% { transform: translateX(-4px); }
+            100% { transform: translateX(0); }
+        }
+
+        .library-button span {
+            background-color: rgba(0, 0, 0, 0.4); /* прозрачный фон */
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
     </style>
+    <script>
+       function validateLibrarySelection() {
+           const selectedId = document.getElementById('selectedLibraryId').value;
+           if (!selectedId) {
+               alert("Пожалуйста, выберите библиотеку перед входом.");
+               return false;
+           }
+           return true;
+       }
+    </script>
 </head>
 <body>
 
 <div class="container">
     <h1>Выбор библиотеки</h1>
 
-    <div th:if="${error}" class="error" th:text="${error}"></div>
-
-    <form method="post" action="/select-library" id="libraryForm">
+    <form method="post" action="library/select-library" id="libraryForm" onsubmit="return validateLibrarySelection()">
         <input type="hidden" name="libraryId" id="selectedLibraryId"/>
 
         <div class="library-grid">
             <div class="library-button"
                  th:each="lib : ${libraries}"
-                 th:text="${lib.name}"
                  th:data-id="${lib.libraryId}"
                  th:style="'background-image: url(/images/library-' + ${lib.libraryId} + '.jpg);'"
+                 th:classappend="${errorLibraryId} == lib.libraryId ? ' error-visible' : ''"
                  onclick="selectLibrary(this)">
+                <span th:text="${lib.name}"></span>
             </div>
         </div>
 
-        <button type="submit" class="btn-submit">📚 Войти</button>
+        <div th:if="${error}" class="error" th:text="${error}"></div>
+
+        <div th:if="${error}">
+            <button type="button" class="btn-submit" onclick="history.back()">⬅ Назад</button>
+        </div>
+        <div th:unless="${error}">
+            <button type="submit" class="btn-submit">📚 Войти</button>
+        </div>
+
     </form>
 </div>
 
 <script>
     function selectLibrary(element) {
-        // Убираем выделение со всех кнопок
         document.querySelectorAll('.library-button').forEach(el => el.classList.remove('selected'));
 
-        // Отмечаем выбранную
         element.classList.add('selected');
 
-        // Передаём ID в hidden input
         const id = element.getAttribute('data-id');
         document.getElementById('selectedLibraryId').value = id;
     }
