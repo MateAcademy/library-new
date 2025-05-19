@@ -119,11 +119,33 @@ public class PersonJdbcTemplateRepository implements PersonRepository {
         return new PageImpl<>(people, pageable, total);
     }
 
+    public Page<Person> findByLibraryId(Long libraryId, Pageable pageable) {
+        int pageSize = pageable.getPageSize();
+        int offset = (int) pageable.getOffset();
+
+        String sql = """
+        SELECT p.*
+        FROM person p
+        JOIN person_library pl ON p.person_id = pl.person_id
+        WHERE pl.library_id = ?
+        ORDER BY p.person_id
+        LIMIT ? OFFSET ?
+    """;
+
+        List<Person> people = jdbcTemplate.query(sql, personRowMapper, libraryId, pageSize, offset);
+
+        String countSql = "SELECT COUNT(*) FROM person_library WHERE library_id = ?";
+        int total = jdbcTemplate.queryForObject(countSql, Integer.class, libraryId);
+
+        return new PageImpl<>(people, pageable, total);
+    }
+
+
     @Override
     public Optional<Person> findByPersonId(Long person_id) {
         String sql = """
         SELECT 
-            p.person_id, p.person_media_id, p.name, p.age, p.email, p.address,
+            p.person_id, p.person_media_id, p.name, p.age, p.email, p.password, p.address,
 
             bc.copy_id, bc.is_available, bc.created_at, bc.updated_at,
             b.book_id, b.title AS book_title, b.author AS book_author, b.year AS book_year
@@ -147,6 +169,7 @@ public class PersonJdbcTemplateRepository implements PersonRepository {
                     person.setName(rs.getString("name"));
                     person.setAge(rs.getInt("age"));
                     person.setEmail(rs.getString("email"));
+                    person.setPassword(rs.getString("password"));
                     person.setAddress(rs.getString("address"));
                 }
 
@@ -208,11 +231,12 @@ public class PersonJdbcTemplateRepository implements PersonRepository {
     }
 
     public void update(Person person) {
-        String sql = "UPDATE person SET name = ?, age = ?, email = ?, address = ? WHERE person_id = ?";
+        String sql = "UPDATE person SET name = ?, age = ?, email = ?, password = ?, address = ? WHERE person_id = ?";
         jdbcTemplate.update(sql,
             person.getName(),
             person.getAge(),
             person.getEmail(),
+            person.getPassword(),
             person.getAddress(),
             person.getPersonId());
     }

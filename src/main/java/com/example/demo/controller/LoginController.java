@@ -6,6 +6,7 @@ import com.example.demo.repository.library.LibraryRepository;
 import com.example.demo.repository.person.PersonRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class LoginController {
@@ -43,8 +45,8 @@ public class LoginController {
                 return "index"; // или вернись на login
             }
 
-            // Сохраняем текущего пользователя в сессию
             session.setAttribute("person", person);
+            session.setAttribute("email", email);
             session.setAttribute("personLibraryIds", person.getLibraries()
                 .stream()
                 .map(Library::getLibraryId)
@@ -53,6 +55,7 @@ public class LoginController {
             List<Library> libraries = libraryRepository.findAll();
             model.addAttribute("libraries", libraries);
 
+            log.info("Person with email {} LOG IN", email);
             return "admin/choose-library";
         } else {
             model.addAttribute("error", "Неверный email или пароль");
@@ -61,8 +64,15 @@ public class LoginController {
     }
 
     @GetMapping("admin/main-person-page")
-    public String mainAdminPage() {
-        return "admin/main-person-page";
+    public String mainAdminPage(HttpSession session) {
+        Long libraryId = (Long) session.getAttribute("libraryId");
+        if (libraryId == 1) {
+            return "library-1/main-admin-page";
+        } else if (libraryId == 2) {
+            return "library-2/main-admin-page";
+        } else {
+            return "library-3/main-admin-page";
+        }
     }
 
     @GetMapping("/logout")

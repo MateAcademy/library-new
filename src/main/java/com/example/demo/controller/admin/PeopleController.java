@@ -2,14 +2,15 @@ package com.example.demo.controller.admin;
 
 import com.example.demo.dto.PersonResponse;
 import com.example.demo.models.Person;
-import com.example.demo.service.BookCopyService;
 import com.example.demo.service.PeopleService;
 import com.example.demo.utils.validators.PersonValidator;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+@Slf4j
 @Controller
 @RequestMapping("admin/people")
 @RequiredArgsConstructor
@@ -31,16 +33,28 @@ public class PeopleController {
     @GetMapping
     public String index(@RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "20") int size,
+                        HttpSession session,
                         Model model) {
-        Page<PersonResponse> peoplePage = peopleService.getPeoplePage(page, size);
+        Long libraryId = (Long) session.getAttribute("libraryId");
+        Page<PersonResponse> peoplePage = peopleService.getPeoplePageByLibrary(libraryId, page, size);
         model.addAttribute("people", peoplePage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("hasNext", peoplePage.hasNext());
-        return "/people/all-people";
+
+        if (libraryId == 1) {
+            return "library-1/all-people";
+        } else if (libraryId == 2) {
+            return "library-2/all-people";
+        } else {
+            return "library-3/all-people";
+        }
     }
 
     @GetMapping("{id}")
-    public String show(@PathVariable Long id, Model model) {
+    public String show(@PathVariable Long id,
+                       HttpSession session,
+                       Model model) {
+        Long libraryId = (Long) session.getAttribute("libraryId");
         Optional<Person> person = peopleService.getPersonById(id);
 
         if (person.isEmpty()) {
@@ -52,7 +66,13 @@ public class PeopleController {
         model.addAttribute("person", personById);
         model.addAttribute("books", personById.getBooks());
 
-        return "/people/person-details";
+        if (libraryId == 1L) {
+            return "library-1/person-details";
+        } else if (libraryId == 2L) {
+            return "library-2/person-details";
+        } else {
+            return "library-3/person-details";
+        }
     }
 
     @GetMapping("new")
@@ -74,11 +94,20 @@ public class PeopleController {
     }
 
     @GetMapping("{id}/edit")
-    public String edit(@PathVariable Long id, Model model) {
+    public String edit(@PathVariable Long id, HttpSession session, Model model) {
         Optional<Person> personById = peopleService.getPersonById(id);
         if (personById.isPresent()) {
             model.addAttribute("person", personById.get());
-            return "/people/edit-person";
+
+            Long libraryId = (Long) session.getAttribute("libraryId");
+            log.info("Edit Person with email: {} and go to the LibraryId: {}", personById.get().getEmail(), libraryId);
+            if (libraryId == 1L) {
+                return "library-1/edit-person";
+            } else if (libraryId == 2L) {
+                return "library-2/edit-person";
+            } else {
+                return "library-3/edit-person";
+            }
         } else {
             return "/admin/person-not-found";
         }
@@ -87,14 +116,24 @@ public class PeopleController {
     @PatchMapping("{id}")
     public String update(@ModelAttribute @Valid Person person,
                          BindingResult bindingResult,
-                         @PathVariable Integer id) {
+                         @PathVariable Long id,
+                         HttpSession session) {
+
+
         personValidator.validate(person, bindingResult);
+        Long libraryId = (Long) session.getAttribute("libraryId");
 
         if (bindingResult.hasErrors()) {
-            return "/people/edit-person";
+            if (libraryId == 1L) {
+                return "library-1/edit-person";
+            } else if (libraryId == 2L) {
+                return "library-2/edit-person";
+            } else {
+                return "library-3/edit-person";
+            }
         }
 
-        peopleService.update(id, person);
+        peopleService.update(person);
         return "/admin/success-update-person-page";
     }
 

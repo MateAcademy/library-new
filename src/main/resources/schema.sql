@@ -14,9 +14,9 @@ CREATE TABLE IF NOT EXISTS person
 INSERT INTO person (person_media_id, name, age, email, password, address)
 VALUES
     ('EDC00000001', 'Иван Иванов', 25, 'ivan@example.com', '123', 'Ukraine, Odessa, 123456'),
-    ('EDC00000002', 'Анна Петрова', 32, 'anna@example.com', '123', 'Russia, Санкт-Петербург, 123456'),
+    ('EDC00000002', 'Анастасия Бартовщук', 32, 'ayabarto@example.com', '123', 'Russia, Санкт-Петербург, 123456'),
     ('EDC00000003', 'Сергей Коваленко', 41, 'sergey@example.com', '123', 'Ukraine, Kiev, 222222'),
-    ('EDC00000004', 'Анастасия Бартовщук', 88, 'ayabarto@gmail.com', '123', 'Ukraine, Kiev, 222222');
+    ('EDC00000004', 'Анна Петрова', 88, 'anna@example.com', '123', 'Ukraine, Kiev, 222222');
 
 CREATE TABLE IF NOT EXISTS book
 (
@@ -64,8 +64,8 @@ CREATE TABLE IF NOT EXISTS library
 INSERT INTO library (name, address)
 VALUES
     ('Библиотека 1  Киев Голосеевский район ', 'Ukraine, Kyiv, 123456'),
-    ('Библиотека 2 Киев Троещина', 'Ukraine, Lviv, 654321'),
-    ('Библиотека 3 Бровары', 'Ukraine, Lviv, 654321');
+    ('Библиотека 2 Киев Троещина', 'Ukraine, Kiev, 654321'),
+    ('Библиотека 3 Бровары', 'Ukraine, Brovary, 654321');
 
 -- Промежуточная таблица person_library (ManyToMany)
 CREATE TABLE IF NOT EXISTS person_library
@@ -77,6 +77,9 @@ CREATE TABLE IF NOT EXISTS person_library
 
 INSERT INTO person_library (person_id, library_id)
 VALUES
-    (1, 1), -- Иван -> Библиотека 1
-    (1, 2), -- Иван -> Библиотека 2
-    (2, 2); -- Анна -> Библиотека 2
+    (1, 1),
+    (2, 1),
+    (3, 1),
+    (4, 1),
+    (4, 2),
+    (4, 3);

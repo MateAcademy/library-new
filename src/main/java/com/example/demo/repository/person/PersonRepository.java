@@ -14,6 +14,7 @@ public interface PersonRepository {
     Optional<Long> findMaxPersonId();
     List<Person> findAll();
     Page<Person> findAll(Pageable pageable);
+    Page<Person> findByLibraryId(Long libraryId, Pageable pageable);
     Optional<Person> findByPersonId(Long id);
     Optional<Person> findByEmail(String email);
     void save(Person person);

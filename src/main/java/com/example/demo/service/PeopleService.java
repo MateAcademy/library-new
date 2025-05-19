@@ -38,9 +38,9 @@ public class PeopleService {
         return peopleMapper.mapToPersonResponseList(allPeople);
     }
 
-    public Page<PersonResponse> getPeoplePage(int page, int size) {
+    public Page<PersonResponse> getPeoplePageByLibrary(Long libraryId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Person> personPage = personRepository.findAll(pageable);
+        Page<Person> personPage = personRepository.findByLibraryId(libraryId, pageable);
         List<PersonResponse> responses = peopleMapper.mapToPersonResponseList(personPage.getContent());
         return new PageImpl<>(responses, pageable, personPage.getTotalElements());
     }
@@ -57,7 +57,7 @@ public class PeopleService {
         System.out.println("PeopleService.class save person to DB personId = " + person.getPersonId());
     }
 
-    public void update(@NonNull Integer id, @NonNull Person updatedPerson) {
+    public void update(@NonNull Person updatedPerson) {
         personRepository.update(updatedPerson);
     }
 

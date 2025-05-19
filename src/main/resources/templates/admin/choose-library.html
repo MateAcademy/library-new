@@ -92,8 +92,13 @@
         }
 
         .library-button.selected {
-            border-color: #007bff;
-            box-shadow: 0 0 10px rgba(0, 123, 255, 0.6);
+            /*border-color: #007bff;*/
+            /*box-shadow: 0 0 10px rgba(0, 123, 255, 0.6);*/
+            border: 6px solid #007bff; /* яркая зелёная рамка */
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.8); /* зелёная подсветка */
+            transform: scale(1.05); /* лёгкое увеличение */
+            transition: all 0.3s ease-in-out;
+            background-color: rgba(0, 0, 0, 0.4); /* затемнение фона */
         }
 
         .btn-submit {
@@ -124,6 +129,10 @@
             background-color: rgba(0, 0, 0, 0.4); /* прозрачный фон */
             padding: 5px 10px;
             border-radius: 5px;
+        }
+
+        .logout-link {
+            text-decoration: none; /* ✅ убирает подчёркивание */
         }
     </style>
     <script>
@@ -163,8 +172,10 @@
         </div>
         <div th:unless="${error}">
             <button type="submit" class="btn-submit">📚 Войти</button>
+            <button type="button" class="logout-link btn-submit" onclick="window.location.href='/logout'" title="Выйти из аккаунта">
+                🔒 <span>Выйти из аккаунта</span>
+            </button>
         </div>
-
     </form>
 </div>
 

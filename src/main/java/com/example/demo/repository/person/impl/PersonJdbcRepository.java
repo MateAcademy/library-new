@@ -60,6 +60,11 @@ public class PersonJdbcRepository implements PersonRepository {
     }
 
     @Override
+    public Page<Person> findByLibraryId(Long libraryId, Pageable pageable) {
+        return null;
+    }
+
+    @Override
     public Optional<Person> findByPersonId(Long id) {
         return Optional.empty();
     }
