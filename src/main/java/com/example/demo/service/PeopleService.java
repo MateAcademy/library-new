@@ -2,9 +2,11 @@ package com.example.demo.service;
 
 import com.example.demo.dto.PersonResponse;
 import com.example.demo.errors.PersonNotDeletedException;
+import com.example.demo.models.Library;
 import com.example.demo.models.Person;
 import com.example.demo.repository.person.PersonRepository;
 import com.example.demo.utils.mappers.PeopleMapper;
+import jakarta.servlet.http.HttpSession;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -13,11 +15,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +31,7 @@ public class PeopleService {
 
     final PersonRepository personRepository;
     final PeopleMapper peopleMapper;
+    final LibraryService libraryService;
 
     public String getNextPersonMediaId() {
         Long maxId = personRepository.findMaxPersonId().orElse(0L);
@@ -34,12 +40,12 @@ public class PeopleService {
     }
 
     public List<PersonResponse> getAllPeople() {
-        List<Person> allPeople = personRepository.findAll();
+        List<Person> allPeople = personRepository.findAll(Sort.by("name").ascending());
         return peopleMapper.mapToPersonResponseList(allPeople);
     }
 
     public Page<PersonResponse> getPeoplePageByLibrary(Long libraryId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size,  Sort.by("name").ascending());
         Page<Person> personPage = personRepository.findByLibraryId(libraryId, pageable);
         List<PersonResponse> responses = peopleMapper.mapToPersonResponseList(personPage.getContent());
         return new PageImpl<>(responses, pageable, personPage.getTotalElements());
@@ -49,27 +55,81 @@ public class PeopleService {
         return personRepository.findByPersonId(person_id);
     }
 
-    public void save(@NonNull Person person) {
+    public void save(@NonNull Person person, HttpSession session) {
+        final Long libraryId = (Long) session.getAttribute("libraryId");
+        if (libraryId != null) {
+            Library library = libraryService.findById(libraryId)
+                    .orElseThrow(() -> new IllegalArgumentException("Library not found with id: " + libraryId));
+
+            Set<Library> libraries = new HashSet<>();
+            libraries.add(library);
+            person.setLibraries(libraries);
+        }
+
         final String nextPersonMediaId = this.getNextPersonMediaId();
         person.setPersonMediaId(nextPersonMediaId);
 
         personRepository.save(person);
-        System.out.println("PeopleService.class save person to DB personId = " + person.getPersonId());
+ //     System.out.println("PeopleService.class save person to DB personId = " + person.getPersonId());
     }
 
-    public void update(@NonNull Person updatedPerson) {
+    public void update(@NonNull Person updatedPerson, HttpSession session) {
+        Long libraryId = (Long) session.getAttribute("libraryId");
+        if (libraryId != null) {
+            Library library = libraryService.findById(libraryId)
+                    .orElseThrow(() -> new IllegalArgumentException("Library not found with id: " + libraryId));
+
+            Set<Library> libraries = new HashSet<>();
+            libraries.add(library);
+            updatedPerson.setLibraries(libraries);
+        }
+
         personRepository.update(updatedPerson);
     }
 
-    public void delete(@NonNull Long id) {
-        Optional<Person> personById = personRepository.findByPersonId(id);
+    public void detachPersonFromLibrary(Long personId, Long libraryId) {
+        Optional<Person> personOpt = personRepository.findByPersonId(personId);
 
-        if (personById.isPresent() && personById.get().getBooks().isEmpty()) {
-            personRepository.delete(id);
+        if (personOpt.isEmpty()) {
+            throw new PersonNotDeletedException(personId);
+        }
+
+        Person person = personOpt.get();
+
+        // Удаляем только связь с этой библиотекой
+        person.getLibraries().removeIf(lib -> lib.getLibraryId().equals(libraryId));
+
+        // Если после удаления библиотек больше нет и у него нет книг — тогда можно удалить самого человека
+        if (person.getLibraries().isEmpty() && person.getBooks().isEmpty()) {
+            personRepository.delete(personId);
         } else {
-            throw new PersonNotDeletedException(id);
+            personRepository.save(person); // обновим связи
         }
     }
+
+//    public void deleteIfInLibrary(@NonNull Long personId, @NonNull Long libraryId) {
+//        Optional<Person> personOpt = personRepository.findByPersonId(personId);
+//
+//        if (personOpt.isEmpty()) {
+//            throw new PersonNotDeletedException(personId);
+//        }
+//
+//        Person person = personOpt.get();
+//
+//        boolean belongs = person.getLibraries().stream()
+//                .anyMatch(lib -> lib.getLibraryId().equals(libraryId));
+//
+//        if (!belongs) {
+//            throw new PersonNotDeletedException(personId); // или AccessDeniedException
+//        }
+//
+//        // Проверка на наличие книг
+//        if (!person.getBooks().isEmpty()) {
+//            throw new PersonNotDeletedException(personId);
+//        }
+//
+//        personRepository.delete(personId);
+//    }
 
     public void insert1000People() {
         List<Person> people = this.get1000People();

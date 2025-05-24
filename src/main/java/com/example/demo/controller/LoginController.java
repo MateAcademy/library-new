@@ -5,7 +5,9 @@ import com.example.demo.models.Person;
 import com.example.demo.repository.library.LibraryRepository;
 import com.example.demo.repository.person.PersonRepository;
 import jakarta.servlet.http.HttpSession;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,15 +23,11 @@ import java.util.stream.Collectors;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class LoginController {
 
-    private final PersonRepository personRepository;
-    private final LibraryRepository libraryRepository;
-
-    @GetMapping
-    public String main() {
-        return "index";
-    }
+    final PersonRepository personRepository;
+    final LibraryRepository libraryRepository;
 
     @PostMapping("login")
     public String login(@RequestParam("email") String email, @RequestParam("password") String password,  Model model, HttpSession session) {
@@ -56,15 +54,22 @@ public class LoginController {
             model.addAttribute("libraries", libraries);
 
             log.info("Person with email {} LOG IN", email);
-            return "admin/choose-library";
+            return "redirect:admin/choose-library";
         } else {
             model.addAttribute("error", "Неверный email или пароль");
             return "index";
         }
     }
 
-    @GetMapping("admin/main-person-page")
-    public String mainAdminPage(HttpSession session) {
+    @GetMapping("/admin/choose-library")
+    public String returnToChooseLibrary(Model model) {
+        List<Library> libraries = libraryRepository.findAll();
+        model.addAttribute("libraries", libraries);
+        return "/admin/choose-library";
+    }
+
+    @GetMapping("admin/main-page")
+    public String choose_library(HttpSession session) {
         Long libraryId = (Long) session.getAttribute("libraryId");
         if (libraryId == 1) {
             return "library-1/main-admin-page";

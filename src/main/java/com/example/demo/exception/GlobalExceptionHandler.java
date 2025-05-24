@@ -1,4 +1,4 @@
-package com.example.demo.controller.exception;
+package com.example.demo.exception;
 
 import com.example.demo.errors.BookNotDeletedException;
 import com.example.demo.errors.PersonNotDeletedException;

@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -57,6 +58,11 @@ public class PersonJdbcRepository implements PersonRepository {
     @Override
     public Page<Person> findAll(Pageable pageable) {
         return null;
+    }
+
+    @Override
+    public List<Person> findAll(Sort sort) {
+        return List.of();
     }
 
     @Override

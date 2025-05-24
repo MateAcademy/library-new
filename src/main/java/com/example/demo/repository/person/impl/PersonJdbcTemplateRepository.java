@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -119,6 +120,11 @@ public class PersonJdbcTemplateRepository implements PersonRepository {
         return new PageImpl<>(people, pageable, total);
     }
 
+    @Override
+    public List<Person> findAll(Sort sort) {
+        return List.of();
+    }
+
     public Page<Person> findByLibraryId(Long libraryId, Pageable pageable) {
         int pageSize = pageable.getPageSize();
         int offset = (int) pageable.getOffset();
@@ -210,7 +216,7 @@ public class PersonJdbcTemplateRepository implements PersonRepository {
     }
 
     public void save(Person person) {
-        String sql = "INSERT INTO person(person_media_id, name, age, email, address) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO person(person_media_id, name, age, email, password, address) VALUES (?, ?, ?, ?, ?, ?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -220,7 +226,8 @@ public class PersonJdbcTemplateRepository implements PersonRepository {
             ps.setString(2, person.getName());
             ps.setInt(3, person.getAge());
             ps.setString(4, person.getEmail());
-            ps.setString(5, person.getAddress());
+            ps.setString(5, person.getPassword());
+            ps.setString(6, person.getAddress());
             return ps;
         }, keyHolder);
 
@@ -228,6 +235,9 @@ public class PersonJdbcTemplateRepository implements PersonRepository {
         if (key != null) {
             person.setPersonId(key.longValue());
         }
+
+        String sql1 = "INSERT INTO person_library (person_id, library_id) VALUES (?, ?)";
+        jdbcTemplate.update(sql1, person.getPersonId(), person.getLibraries().stream().findFirst().get().getLibraryId());
     }
 
     public void update(Person person) {

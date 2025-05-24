@@ -124,6 +124,9 @@
     <label>ID (нельзя изменить):</label>
     <input type="text" th:field="*{personId}" readonly/>
 
+    <label>PersonMediaId (нельзя изменить):</label>
+    <input type="text" th:field="*{personMediaId}" readonly/>
+
     <label>Имя:</label>
     <input type="text" th:field="*{name}" required/>
     <div style="color: red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</div>

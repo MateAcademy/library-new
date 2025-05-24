@@ -1,6 +1,7 @@
 package com.example.demo.controller.admin;
 
 import com.example.demo.dto.PersonResponse;
+import com.example.demo.errors.PersonNotDeletedException;
 import com.example.demo.models.Person;
 import com.example.demo.service.PeopleService;
 import com.example.demo.utils.validators.PersonValidator;
@@ -31,23 +32,18 @@ public class PeopleController {
     final PersonValidator personValidator;
 
     @GetMapping
-    public String index(@RequestParam(defaultValue = "0") int page,
-                        @RequestParam(defaultValue = "20") int size,
+    public String index(@RequestParam(defaultValue = "0") Integer page,
+                        @RequestParam(defaultValue = "20") Integer pageSize,
                         HttpSession session,
                         Model model) {
-        Long libraryId = (Long) session.getAttribute("libraryId");
-        Page<PersonResponse> peoplePage = peopleService.getPeoplePageByLibrary(libraryId, page, size);
+        final Long libraryId = (Long) session.getAttribute("libraryId");
+        Page<PersonResponse> peoplePage = peopleService.getPeoplePageByLibrary(libraryId, page, pageSize);
+
         model.addAttribute("people", peoplePage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("hasNext", peoplePage.hasNext());
 
-        if (libraryId == 1) {
-            return "library-1/all-people";
-        } else if (libraryId == 2) {
-            return "library-2/all-people";
-        } else {
-            return "library-3/all-people";
-        }
+        return getLibraryView("all-people", libraryId);
     }
 
     @GetMapping("{id}")
@@ -66,13 +62,7 @@ public class PeopleController {
         model.addAttribute("person", personById);
         model.addAttribute("books", personById.getBooks());
 
-        if (libraryId == 1L) {
-            return "library-1/person-details";
-        } else if (libraryId == 2L) {
-            return "library-2/person-details";
-        } else {
-            return "library-3/person-details";
-        }
+        return getLibraryView("person-details", libraryId);
     }
 
     @GetMapping("new")
@@ -82,14 +72,14 @@ public class PeopleController {
 
     @PostMapping
     public String create(@ModelAttribute @Valid Person person,
-                         BindingResult bindingResult) {  // @RequestParam(required = false) String name
+                         BindingResult bindingResult, HttpSession session) {  // @RequestParam(required = false) String name
         personValidator.validate(person, bindingResult);
 
         if (bindingResult.hasErrors()) {
             return "/people/new-person";
         }
 
-        peopleService.save(person);
+        peopleService.save(person, session);
         return "/admin/success-create-person-page";
     }
 
@@ -101,48 +91,42 @@ public class PeopleController {
 
             Long libraryId = (Long) session.getAttribute("libraryId");
             log.info("Edit Person with email: {} and go to the LibraryId: {}", personById.get().getEmail(), libraryId);
-            if (libraryId == 1L) {
-                return "library-1/edit-person";
-            } else if (libraryId == 2L) {
-                return "library-2/edit-person";
-            } else {
-                return "library-3/edit-person";
-            }
+
+            return getLibraryView("edit-person", libraryId);
         } else {
             return "/admin/person-not-found";
         }
     }
 
     @PatchMapping("{id}")
-    public String update(@ModelAttribute @Valid Person person,
+    public String update(@ModelAttribute @Valid Person updatedPerson,
                          BindingResult bindingResult,
                          @PathVariable Long id,
                          HttpSession session) {
 
 
-        personValidator.validate(person, bindingResult);
+        personValidator.validate(updatedPerson, bindingResult);
         Long libraryId = (Long) session.getAttribute("libraryId");
 
         if (bindingResult.hasErrors()) {
-            if (libraryId == 1L) {
-                return "library-1/edit-person";
-            } else if (libraryId == 2L) {
-                return "library-2/edit-person";
-            } else {
-                return "library-3/edit-person";
-            }
+            return getLibraryView("edit-person", libraryId);
         }
 
-        peopleService.update(person);
+        peopleService.update(updatedPerson, session);
         return "/admin/success-update-person-page";
     }
 
     @DeleteMapping("{id}")
-    public String delete(@PathVariable Long id) {
-        peopleService.delete(id);
-        return "/admin/success-delete-person-page";
-    }
+    public String delete(@PathVariable Long id, HttpSession session) {
+        Long libraryId = (Long) session.getAttribute("libraryId");
 
+        try {
+            peopleService.detachPersonFromLibrary(id, libraryId);
+            return "/admin/success-delete-person-page";
+        } catch (PersonNotDeletedException e) {
+            return "/admin/person-not-found";
+        }
+    }
     @GetMapping("insert1000People")
     public String insert1000People() {
         peopleService.insert1000People();
@@ -154,4 +138,15 @@ public class PeopleController {
         peopleService.butchInsert1000People();
         return "redirect:/admin/people";
     }
+
+    private String getLibraryView(String viewName, Long libraryId) {
+        return new StringBuilder()
+                .append("library-")
+                .append(libraryId)
+                .append("/")
+                .append(viewName)
+                .toString();
+    }
+
 }
+

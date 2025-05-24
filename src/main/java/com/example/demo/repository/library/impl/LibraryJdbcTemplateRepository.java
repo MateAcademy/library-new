@@ -4,6 +4,7 @@ import com.example.demo.models.Library;
 import com.example.demo.repository.library.LibraryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -15,6 +16,7 @@ import static lombok.AccessLevel.PRIVATE;
 
 @Repository
 @RequiredArgsConstructor
+@Profile("jdbc-template")
 @FieldDefaults(level = PRIVATE, makeFinal = true)
 public class LibraryJdbcTemplateRepository implements LibraryRepository {
 

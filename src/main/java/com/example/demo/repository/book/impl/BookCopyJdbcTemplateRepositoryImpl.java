@@ -15,12 +15,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-
 @Repository
 @RequiredArgsConstructor
 @Profile("jdbc-template")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BookCopyJdbcTemplateRepository implements BookCopyRepository {
+public class BookCopyJdbcTemplateRepositoryImpl implements BookCopyRepository {
 
     final JdbcTemplate jdbcTemplate;
 
@@ -153,6 +152,4 @@ public class BookCopyJdbcTemplateRepository implements BookCopyRepository {
 
         return copy;
     };
-
-
 }
