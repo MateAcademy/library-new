@@ -51,10 +51,10 @@ public class BookJdbcTemplateRepositoryImpl implements BookRepository {
                 copy.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
                 copy.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
 
-                Long personId = rs.getLong("person_id");
+                Long personId = rs.getLong("id");
                 if (!rs.wasNull()) {
                     Person owner = new Person();
-                    owner.setPersonId(personId);
+                    //owner.setPersonId(personId);
                     copy.setOwner(owner);
                 }
 

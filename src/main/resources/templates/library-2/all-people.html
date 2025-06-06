@@ -79,8 +79,8 @@
 
 <div class="container" id="peopleContainer">
     <div class="card" th:each="person: ${people}">
-        <a th:href="@{/admin/people/{id}(id=${person.personId})}" th:text="${person.getName()}">Имя пользователя</a>
-        <p style="margin-top: 8px; color: #333;" th:text="'ID: ' + ${person.personMediaId}">ID</p>
+        <a th:href="@{/admin/people/{id}(id=${person.id})}" th:text="${person.getName()}">Имя пользователя</a>
+        <p style="margin-top: 8px; color: #333;" th:text="'ID: ' + ${person.mediaId}">ID</p>
     </div>
 </div>
 

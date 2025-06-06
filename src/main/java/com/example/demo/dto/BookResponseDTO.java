@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BookResponse {
+public class BookResponseDTO {
 
     Long bookId;
     String title;
@@ -19,7 +19,7 @@ public class BookResponse {
     int totalCopies;
 
 
-    public BookResponse(Long bookId, String title, String author, Integer year) {
+    public BookResponseDTO(Long bookId, String title, String author, Integer year) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;

@@ -71,12 +71,12 @@ public class BookCopyJdbcTemplateRepositoryImpl implements BookCopyRepository {
             book.setBookId(rs.getLong("book_id"));
             copy.setBook(book);
 
-            String personMediaId = rs.getObject("person_media_id", String.class);
+            String mediaId = rs.getObject("media_id", String.class);
             Long personId = rs.getObject("person_id", Long.class);
             if (personId != null) {
                 Person person = new Person();
-                person.setPersonMediaId(personMediaId);
-                person.setPersonId(personId);
+                person.setMediaId(mediaId);
+                //person.setPersonId(personId);
                 person.setName(rs.getString("p_name")); // важно: имя вытаскиваем
                 copy.setOwner(person);
             }
@@ -109,7 +109,7 @@ public class BookCopyJdbcTemplateRepositoryImpl implements BookCopyRepository {
             copy.setBook(book);
 
             Person person = new Person();
-            person.setPersonId(rs.getLong("p_id"));
+           // person.setPersonId(rs.getLong("p_id"));
             person.setName(rs.getString("p_name"));
             copy.setOwner(person);
 
@@ -142,7 +142,7 @@ public class BookCopyJdbcTemplateRepositoryImpl implements BookCopyRepository {
         Long personId = rs.getObject("person_id", Long.class);
         if (personId != null) {
             Person p = new Person();
-            p.setPersonId(personId);
+            //p.setPersonId(personId);
             copy.setOwner(p);
         }
 

@@ -1,15 +1,14 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.BookResponse;
+import com.example.demo.dto.BookResponseDTO;
 import com.example.demo.errors.BookNotDeletedException;
-import com.example.demo.errors.BookNotFoundException;
 import com.example.demo.models.Book;
 import com.example.demo.models.BookCopy;
 import com.example.demo.notification.ClientRequestException;
 import com.example.demo.notification.ExceptionMessage;
 import com.example.demo.repository.book.BookCopyRepository;
 import com.example.demo.repository.book.BookRepository;
-import com.example.demo.utils.mappers.BookMapper;
+import com.example.demo.mapper.BookMapper;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.NonNull;
@@ -38,14 +37,14 @@ public class BookService {
     final BookMapper bookMapper;
 
 
-    public Page<BookResponse> getBooksPage(int page, int size) {
+    public Page<BookResponseDTO> getBooksPage(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Book> books = bookRepository.findAll(pageable);
 
-        List<BookResponse> responses = books.getContent().stream()
+        List<BookResponseDTO> responses = books.getContent().stream()
             .map(book -> {
                 int copies = bookCopyRepository.countByBookId(book.getBookId());
-                return new BookResponse(
+                return new BookResponseDTO(
                     book.getBookId(),
                     book.getTitle(),
                     book.getAuthor(),

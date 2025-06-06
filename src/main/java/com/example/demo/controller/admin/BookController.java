@@ -1,13 +1,9 @@
 package com.example.demo.controller.admin;
 
-import com.example.demo.dto.BookResponse;
+import com.example.demo.dto.BookResponseDTO;
 import com.example.demo.models.Book;
-import com.example.demo.models.BookCopy;
-import com.example.demo.models.Person;
-import com.example.demo.service.BookCopyService;
 import com.example.demo.service.BookService;
 
-import com.example.demo.service.PeopleService;
 import com.example.demo.utils.validators.BookValidator;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -42,7 +38,7 @@ public class BookController {
     public String index(@RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "20") int size,
                         Model model) {
-        Page<BookResponse> booksPage = bookService.getBooksPage(page, size);
+        Page<BookResponseDTO> booksPage = bookService.getBooksPage(page, size);
 
 
         model.addAttribute("books", booksPage.getContent());

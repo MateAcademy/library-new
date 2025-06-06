@@ -1,5 +1,6 @@
 package com.example.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,13 +23,14 @@ public class BookCopy {
 
     @ManyToOne
     @JoinColumn(name = "book_id")
+    @JsonIgnoreProperties("copies")
     Book book;
 
     @Column(name = "is_available")
     boolean isAvailable;
 
     @ManyToOne
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "id")
     Person owner;
 
     @CreatedDate

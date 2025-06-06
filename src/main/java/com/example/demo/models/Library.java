@@ -2,18 +2,19 @@ package com.example.demo.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -25,8 +26,8 @@ public class Library {
     Long libraryId;
 
     @NotEmpty(message = "Name should not be empty")
-    @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
-    @Column(name = "name")
+    @Size(min = 2, max = 100, message = "Name should be between 2 and 100 characters")
+    @Column(name = "name", length = 100)
     String name;
 
     @NotEmpty(message = "Address should not be empty")
@@ -40,4 +41,9 @@ public class Library {
 
     @ManyToMany(mappedBy = "libraries")
     List<Person> personList;
+
+    public Library(String name, String address) {
+        this.name = name;
+        this.address = address;
+    }
 }

@@ -1,7 +1,7 @@
 package com.example.demo.utils.validators;
 
+import com.example.demo.dto.PersonFormDTO;
 import com.example.demo.dto.PersonResponseDTO;
-import com.example.demo.models.Person;
 import com.example.demo.repository.person.PersonRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -15,18 +15,18 @@ import java.util.Objects;
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
-public class PersonValidator implements Validator {
+public class PersonFormDTOValidator implements Validator {
 
     final PersonRepository personRepository;
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return PersonResponseDTO.class.equals(clazz);
+        return PersonFormDTO.class.equals(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        PersonResponseDTO person = (PersonResponseDTO) target;
+        PersonFormDTO person = (PersonFormDTO) target;
 
         // Если новая запись (ID == null)
         if (person.getId() == null) {

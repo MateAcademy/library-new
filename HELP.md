@@ -1,28 +1,33 @@
-# Getting Started
 
-### Reference Documentation
-For further reference, please consider the following sections:
 
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/3.4.3/maven-plugin)
-* [Create an OCI image](https://docs.spring.io/spring-boot/3.4.3/maven-plugin/build-image.html)
-* [Thymeleaf](https://docs.spring.io/spring-boot/3.4.3/reference/web/servlet.html#web.servlet.spring-mvc.template-engines)
-* [Spring Reactive Web](https://docs.spring.io/spring-boot/3.4.3/reference/web/reactive.html)
-* [Spring Web](https://docs.spring.io/spring-boot/3.4.3/reference/web/servlet.html)
+# 🎯 Project Goal
 
-### Guides
-The following guides illustrate how to use some features concretely:
+### This is a personal, non-commercial project designed to deepen my skills, solve real-world challenges, and explore various technologies in practice.
 
-* [Handling Form Submission](https://spring.io/guides/gs/handling-form-submission/)
-* [Building a Reactive RESTful Web Service](https://spring.io/guides/gs/reactive-rest-service/)
-* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
-* [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
+🔧 Technologies & Concepts Explored
 
-### Maven Parent overrides
+<span style="color:#6495ED">Working with various databases: PostgreSQL and MongoDB</span>
 
-Due to Maven's design, elements are inherited from the parent POM to the project POM.
-While most of the inheritance is fine, it also inherits unwanted elements like `<license>` and `<developers>` from the parent.
-To prevent this, the project POM contains empty overrides for these elements.
-If you manually switch to a different parent and actually want the inheritance, you need to remove those overrides.
+<span style="color:#6495ED">Exploring different data access methods:
+Started with Arrays → then ArrayList → JDBC → JDBC Template → Spring Data JPA.
+Used multiple Spring profiles, selectable via the configuration file</span>
 
+<span style="color:#6495ED">Using Hibernate and Spring Data JPA, writing queries with Criteria API</span>
+
+<span style="color:#6495ED">Modeling relationships: Many-to-Many, One-to-Many</span>
+
+<span style="color:#6495ED">Implementing Logging mechanisms</span>
+
+<span style="color:#6495ED">Handling Exceptions gracefully</span>
+
+<span style="color:#6495ED">Working with Transactions</span>
+
+<span style="color:#6495ED">Implementing Caching strategies</span>
+
+<span style="color:#6495ED">Conducting Benchmarking for performance insights</span>
+
+<span style="color:#6495ED">Translation</span>
+
+<span style="color:#6495ED">Applying AOP (Aspect-Oriented Programming)</span>
+
+<span style="color:#6495ED">Managing Authentication and Authorization with Spring Security</span>

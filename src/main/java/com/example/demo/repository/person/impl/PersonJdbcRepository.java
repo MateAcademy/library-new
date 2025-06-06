@@ -75,12 +75,12 @@ public class PersonJdbcRepository implements PersonRepository {
         return Optional.empty();
     }
 
-    public Optional<Person> findById(Long person_id) {
-        String sql = "SELECT * FROM person WHERE person_id = ?";
+    public Optional<Person> findById(Long id) {
+        String sql = "SELECT * FROM person WHERE id = ?";
         try (Connection connection = postgresConnector.connect();
              PreparedStatement ps = connection.prepareStatement(sql)) {
 
-            ps.setLong(1, person_id);
+            ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
@@ -114,7 +114,7 @@ public class PersonJdbcRepository implements PersonRepository {
 
             ResultSet generatedKeys = ps.getGeneratedKeys();
             if (generatedKeys.next()) {
-                person.setPersonId(generatedKeys.getLong(1));
+                //person.setPersonId(generatedKeys.getLong(1));
             }
 
         } catch (SQLException e) {
@@ -132,7 +132,7 @@ public class PersonJdbcRepository implements PersonRepository {
             ps.setInt(2, updatedPerson.getAge());
             ps.setString(3, updatedPerson.getEmail());
             ps.setString(4, updatedPerson.getAddress());
-            ps.setLong(5, updatedPerson.getPersonId());
+            ps.setLong(5, updatedPerson.getId());
 
             ps.executeUpdate();
 
@@ -165,12 +165,18 @@ public class PersonJdbcRepository implements PersonRepository {
         return Optional.empty();
     }
 
+    @Override
+    public Optional<Person> findByIdWithBooksAndLibraries(Long id) {
+        return Optional.empty();
+    }
+
     private Person mapRow(ResultSet rs) throws SQLException {
         return new Person(
             rs.getString("person_media_id"),
             rs.getString("name"),
             rs.getInt("age"),
             rs.getString("email"),
+            rs.getString("password"),
             rs.getString("address")
         );
     }

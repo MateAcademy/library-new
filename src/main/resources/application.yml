@@ -1,44 +1,43 @@
 server:
-  port: ${PORT}
+  port: ${PORT:8080}
 
 spring:
   config:
     import: classpath:database.properties
   application:
-    name: ${PROJECT_NAME}
+    name: ${PROJECT_NAME:library-app}
   profiles:
-    active: ${PROFILES_DB}
+    active: ${PROFILES_DB:dev}
   sql:
     init:
-      mode: ${MODE}
-      schema-locations: ${SCHEMA_LOCATIONS}
-  output:
-    ansi:
-      enabled: always
+      mode: always
+  jpa:
+    defer-datasource-initialization: true
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: create # или update
+    properties:
+      generate_statistics: true
+      hibernate:
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+        order_updates: true
 
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-  jpa:
-    hibernate:
-      ddl-auto: ${DDL_AUTO}
-    show-sql: ${SHOW_SQL}
-    properties:
-      hibernate:
-        dialect: ${DIALECT}
 
 springdoc:
   swagger-ui:
-    path: /swagger
-    operationsSorter: method
-    tagsSorter: alpha
-    display-request-duration: true
+    path: /swagger-ui.html
 
 logging:
   level:
-    root: ERROR # или INFO, DEBUG
-    com.example.demo: DEBUG # для твоих классов
+    root: ERROR
+    com.example.demo: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %level - %logger{36} - %msg%n"
   file:
@@ -46,4 +45,3 @@ logging:
   charset:
     console: UTF-8
     file: UTF-8
-

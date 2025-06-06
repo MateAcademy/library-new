@@ -57,7 +57,7 @@ public class BookCopyJpaRepositoryImpl implements BookCopyRepository {
 
     @Override
     public Optional<List<BookCopy>> findByPersonId(Long personId) {
-        List<BookCopy> list = jpaRepository.findByOwner_PersonId(personId);
+        List<BookCopy> list = jpaRepository.findByOwner_Id(personId);
         return list.isEmpty() ? Optional.empty() : Optional.of(list);
     }
 }

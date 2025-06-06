@@ -24,4 +24,5 @@ public interface PersonRepository {
     void delete(Long id);
     void butchSaveAll(List<Person> people);
     Optional<Long> findLastPersonId();
+    Optional<Person> findByIdWithBooksAndLibraries(Long id);
 }

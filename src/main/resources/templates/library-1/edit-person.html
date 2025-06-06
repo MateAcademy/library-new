@@ -120,12 +120,12 @@
 
 <h1 class="back-button">Обновление пользователя</h1>
 
-<form th:action="@{'/admin/people/' + ${person.getPersonId()}}" th:object="${person}" th:method="patch">
+<form th:action="@{'/admin/people'}" th:object="${person}" th:method="patch">
     <label>ID (нельзя изменить):</label>
-    <input type="text" th:field="*{personId}" readonly/>
+    <input type="text" th:field="*{id}" readonly/>
 
     <label>PersonMediaId (нельзя изменить):</label>
-    <input type="text" th:field="*{personMediaId}" readonly/>
+    <input type="text" th:field="*{mediaId}" readonly/>
 
     <label>Имя:</label>
     <input type="text" th:field="*{name}" required/>
@@ -139,9 +139,9 @@
     <input type="email" th:field="*{email}" required/>
     <div style="color: red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email error</div>
 
-    <label>Пароль:</label>
-    <input type="password" th:field="*{password}" required/>
-    <div style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</div>
+<!--    <label>Пароль:</label>-->
+<!--    <input type="password" th:field="*{password}" required/>-->
+<!--    <div style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password error</div>-->
 
     <label>Адрес:</label>
     <input type="text" th:field="*{address}" required/>

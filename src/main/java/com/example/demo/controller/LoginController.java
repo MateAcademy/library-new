@@ -36,11 +36,11 @@ public class LoginController {
         if (userOpt.isPresent()) {
             Person person = userOpt.get();
 
-            Set<Library> personLibraries = person.getLibraries();
+            final Set<Library> personLibraries = person.getLibraries();
 
             if (personLibraries == null || personLibraries.isEmpty()) {
                 model.addAttribute("error", "У вас нет доступа ни к одной библиотеке.");
-                return "index"; // или вернись на login
+                return "index";
             }
 
             session.setAttribute("person", person);
@@ -50,11 +50,11 @@ public class LoginController {
                 .map(Library::getLibraryId)
                 .collect(Collectors.toSet()));
 
-            List<Library> libraries = libraryRepository.findAll();
+            final List<Library> libraries = libraryRepository.findAll();
             model.addAttribute("libraries", libraries);
 
-            log.info("Person with email {} LOG IN", email);
-            return "redirect:admin/choose-library";
+            log.info("Person with email {} LOG IN to site", email);
+            return "admin/choose-library";
         } else {
             model.addAttribute("error", "Неверный email или пароль");
             return "index";
@@ -70,7 +70,7 @@ public class LoginController {
 
     @GetMapping("admin/main-page")
     public String choose_library(HttpSession session) {
-        Long libraryId = (Long) session.getAttribute("libraryId");
+        final Long libraryId = (Long) session.getAttribute("libraryId");
         if (libraryId == 1) {
             return "library-1/main-admin-page";
         } else if (libraryId == 2) {
@@ -82,7 +82,10 @@ public class LoginController {
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.invalidate(); // очищает все атрибуты сессии
+        final String email = (String) session.getAttribute("email");
+
+        log.info("Person with email {} LOG OUT from site", email);
+        session.invalidate();
         return "redirect:/";
     }
 }

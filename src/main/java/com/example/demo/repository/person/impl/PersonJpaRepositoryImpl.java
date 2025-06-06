@@ -4,6 +4,7 @@ import com.example.demo.models.Person;
 import com.example.demo.repository.person.PersonRepository;
 
 import com.example.demo.repository.person.jpa.PersonJpaSpringDataRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
@@ -48,7 +49,7 @@ public class PersonJpaRepositoryImpl implements PersonRepository {
 
     @Override
     public Page<Person> findByLibraryId(Long libraryId, Pageable pageable) {
-        return jpaRepository.findByLibraries_LibraryId(libraryId, pageable);
+        return jpaRepository.findByLibraryIdWithBooksAndLibraries(libraryId, pageable);
     }
 
     @Override
@@ -76,6 +77,7 @@ public class PersonJpaRepositoryImpl implements PersonRepository {
         jpaRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
     public void butchSaveAll(List<Person> people) {
         jpaRepository.saveAll(people);
@@ -84,5 +86,10 @@ public class PersonJpaRepositoryImpl implements PersonRepository {
     @Override
     public Optional<Long> findLastPersonId() {
         return jpaRepository.findMaxPersonId(); // можно вернуть то же самое
+    }
+
+    @Override
+    public Optional<Person> findByIdWithBooksAndLibraries(Long personId) {
+        return jpaRepository.findByIdWithBooksAndLibraries(personId);
     }
 }
