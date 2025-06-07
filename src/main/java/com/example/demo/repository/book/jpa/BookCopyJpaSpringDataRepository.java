@@ -18,10 +18,10 @@ public interface BookCopyJpaSpringDataRepository extends JpaRepository<BookCopy,
     List<BookCopy> findByOwner_Id(Long personId);
 
     @Modifying
-    @Query("UPDATE BookCopy bc SET bc.owner.id = :personId, bc.isAvailable = false WHERE bc.bookCopyId = :copyId")
+    @Query("UPDATE BookCopy bc SET bc.owner.id = :personId, bc.isAvailable = false WHERE bc.id = :copyId")
     void assignBookCopy(Long copyId, Long personId);
 
     @Modifying
-    @Query("UPDATE BookCopy bc SET bc.owner = null, bc.isAvailable = true WHERE bc.bookCopyId = :copyId")
+    @Query("UPDATE BookCopy bc SET bc.owner = null, bc.isAvailable = true WHERE bc.id = :copyId")
     void unassignBookCopy(Long copyId);
 }

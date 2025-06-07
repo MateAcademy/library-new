@@ -25,7 +25,6 @@ public class BookCopyController {
     final BookCopyService bookCopyService;
     final PeopleService peopleService;
 
-
     @GetMapping("{bookId}")
     public String showBookCopyById(@PathVariable Long bookId, Model model) {
         Optional<Book> bookOpt = bookService.getBookById(bookId);

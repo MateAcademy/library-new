@@ -5,10 +5,12 @@ import com.example.demo.models.Book;
 import com.example.demo.service.BookService;
 
 import com.example.demo.utils.validators.BookValidator;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Optional;
 
+@Slf4j
 @Controller
 @RequestMapping("admin/books")
 @RequiredArgsConstructor
@@ -37,14 +40,21 @@ public class BookController {
     @GetMapping
     public String index(@RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "20") int size,
+                        HttpSession session,
                         Model model) {
-        Page<BookResponseDTO> booksPage = bookService.getBooksPage(page, size);
+        final Long libraryId = (Long) session.getAttribute("libraryId");
+        if (libraryId == null) {
+            log.warn("libraryId not found in session BookController");
+            return "redirect:/admin/choose-library";
+        }
 
+        Page<BookResponseDTO> booksPage = bookService.getBooksPage(page, size);
 
         model.addAttribute("books", booksPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("hasNext", booksPage.hasNext());
-        return "/books/all-books";
+
+        return this.getLibraryView(libraryId, "all-books");
     }
 
     @GetMapping("new")
@@ -109,15 +119,7 @@ public class BookController {
         return "/books/book-details";
     }
 
-//    @GetMapping("insert1000People")
-//    public String insert1000Books() {
-//        bookService.insert1000Books();
-//        return "/admin/books";
-//    }
-//
-//    @GetMapping("butch_insert1000People")
-//    public String butch_insert1000Books() {
-//        bookService.batchInsert1000Books();
-//        return "/admin/people";
-//    }
+    private String getLibraryView(Long libraryId, String viewName) {
+        return "library-%d/book/%s".formatted(libraryId, viewName);
+    }
 }

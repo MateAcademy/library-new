@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>All books</title>
+  <style>
+    body {
+      background-image: url('/fon/pexels-minan1398.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-attachment: fixed;
+
+      font-family: Arial, sans-serif;
+      /*background-color: #f4f4f4;*/
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      width: 200px;
+      text-align: center;
+      transition: 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .card a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .card a:hover {
+      color: #0056b3;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      background: #007bff;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.3s ease-in-out, transform 0.2s;
+    }
+
+    .back-button:hover {
+      background: #0056b3;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="bookContainer">
+  <div class="card" th:each="book: ${books}">
+    <a th:href="@{/admin/book-copy/{bookId}(bookId=${book.bookId})}" th:text="${book.title}">Название книги</a>
+    <p><strong>Автор:</strong> <span th:text="${book.author}"></span></p>
+    <p><strong>Год издания:</strong> <span th:text="${book.year}"></span></p>
+    <p><strong>Количество:</strong> <span th:text="${book.totalCopies}">0</span></p>
+  </div>
+</div>
+
+<div th:if="${hasNext}">
+  <a th:href="@{/admin/books(page=${currentPage + 1}, size=20)}" class="back-button">⬇️ Загрузить ещё</a>
+</div>
+
+<a href="javascript:history.back()" class="back-button">🏠 Вернуться на главную</a>
+
+</body>
+</html>

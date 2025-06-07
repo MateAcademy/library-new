@@ -17,6 +17,7 @@ public class BookResponseDTO {
     String author;
     Integer year;
     int totalCopies;
+    int inLibraryCopies;
 
 
     public BookResponseDTO(Long bookId, String title, String author, Integer year) {
@@ -24,6 +25,13 @@ public class BookResponseDTO {
         this.title = title;
         this.author = author;
         this.year = year;
-        this.totalCopies = 0;
+    }
+
+    public BookResponseDTO(Long bookId, String title, String author, Integer year, int totalCopies) {
+        this.bookId = bookId;
+        this.title = title;
+        this.author = author;
+        this.year = year;
+        this.totalCopies = totalCopies;
     }
 }

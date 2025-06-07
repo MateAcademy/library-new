@@ -1,5 +1,6 @@
 package com.example.demo.models;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,6 +28,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.BatchSize;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -82,9 +84,6 @@ public class Person {
     @Column(name = "address")
     String address;
 
-    @OneToMany(mappedBy = "owner")
-    List<BookCopy> books;
-
     @ManyToMany
     @JoinTable(
         name = "person_library",
@@ -92,6 +91,9 @@ public class Person {
         inverseJoinColumns = @JoinColumn(name = "library_id")
     )
     Set<Library> libraries;
+
+    @OneToMany(mappedBy = "owner")
+    List<BookCopy> bookCopy;
 
     public Person(String mediaId, String name, Integer age, String email, String password, String address ) {
         this.mediaId = mediaId;

@@ -96,13 +96,13 @@ public class PeopleService {
     @Transactional
     protected void deletePersonFromLibrary(@NonNull Person person, @NonNull Long libraryId, @NonNull String personEmail) {
 //todo: проверить когда будут книги смогу ли удалить человека
-        if (!person.getBooks().isEmpty()) {
+        if (!person.getBookCopy().isEmpty()) {
             throw new PersonNotDeletedException(person.getId());
         }
 
         person.getLibraries().removeIf(lib -> lib.getLibraryId().equals(libraryId));
 
-        if (person.getLibraries().isEmpty() && person.getBooks().isEmpty()) {
+        if (person.getLibraries().isEmpty() && person.getBookCopy().isEmpty()) {
             personRepository.delete(person.getId());
         } else {
             personRepository.save(person); // обновим связи

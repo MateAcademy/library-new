@@ -46,7 +46,7 @@ public class BookJdbcTemplateRepositoryImpl implements BookRepository {
             String copySql = "SELECT * FROM book_copy WHERE book_id = ?";
             List<BookCopy> copies = jdbcTemplate.query(copySql, (rs, rowNum) -> {
                 BookCopy copy = new BookCopy();
-                copy.setBookCopyId(rs.getLong("copy_id"));
+                copy.setId(rs.getLong("copy_id"));
                 copy.setAvailable(rs.getBoolean("is_available"));
                 copy.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
                 copy.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());

@@ -69,15 +69,15 @@ public class LoginController {
     }
 
     @GetMapping("admin/main-page")
-    public String choose_library(HttpSession session) {
+    @SuppressWarnings("SpringMVCViewInspection")
+    public String chooseLibrary(HttpSession session) {
         final Long libraryId = (Long) session.getAttribute("libraryId");
-        if (libraryId == 1) {
-            return "library-1/main-admin-page";
-        } else if (libraryId == 2) {
-            return "library-2/main-admin-page";
-        } else {
-            return "library-3/main-admin-page";
+
+        if (libraryId == null) {
+            return "redirect:/admin/choose-library";
         }
+
+        return "library-%s/main-admin-page".formatted(libraryId);
     }
 
     @GetMapping("/logout")

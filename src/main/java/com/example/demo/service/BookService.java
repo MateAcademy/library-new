@@ -36,7 +36,6 @@ public class BookService {
     final BookCopyRepository bookCopyRepository;
     final BookMapper bookMapper;
 
-
     public Page<BookResponseDTO> getBooksPage(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Book> books = bookRepository.findAll(pageable);

@@ -64,7 +64,7 @@ public class BookCopyJdbcTemplateRepositoryImpl implements BookCopyRepository {
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             BookCopy copy = new BookCopy();
-            copy.setBookCopyId(rs.getLong("copy_id"));
+            copy.setId(rs.getLong("copy_id"));
             copy.setAvailable(rs.getBoolean("is_available"));
 
             Book book = new Book();
@@ -100,7 +100,7 @@ public class BookCopyJdbcTemplateRepositoryImpl implements BookCopyRepository {
 
         List<BookCopy> copies = jdbcTemplate.query(sql, (rs, rowNum) -> {
             BookCopy copy = new BookCopy();
-            copy.setBookCopyId(rs.getLong("copy_id"));
+            copy.setId(rs.getLong("copy_id"));
             copy.setAvailable(rs.getBoolean("is_available"));
 
             Book book = new Book();
@@ -136,7 +136,7 @@ public class BookCopyJdbcTemplateRepositoryImpl implements BookCopyRepository {
     // RowMapper для преобразования результата в объект BookCopy
     RowMapper<BookCopy> rowMapper = (rs, rowNum) -> {
         BookCopy copy = new BookCopy();
-        copy.setBookCopyId(rs.getLong("copy_id"));
+        copy.setId(rs.getLong("copy_id"));
         copy.setAvailable(rs.getBoolean("is_available"));
 
         Long personId = rs.getObject("person_id", Long.class);

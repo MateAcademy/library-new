@@ -11,11 +11,6 @@ VALUES
 
 SELECT setval('person_id_seq', 2, true);
 
-INSERT INTO book (title, author, year)
-VALUES
-    ('Основы java', 'Hortsman', 2020),
-    ('Java Script для детей', 'Prokopenko', 2025);
-
 INSERT INTO library (name, address)
 VALUES
     ('Библиотека 1  Киев Голосеевский район', 'Ukraine, Kyiv, 123456'),
@@ -28,3 +23,18 @@ VALUES
     (2, 2),
     (2, 3),
     (1, 1);
+
+INSERT INTO book (title, author, year)
+VALUES
+    ('Основы java', 'Hortsman', 2020),
+    ('Java Script для детей', 'Prokopenko', 2025);
+
+INSERT INTO book_copy(book_id, is_available, owner_id, library_id)
+values  (1, true, null, 1),
+        (1, true, null, 1),
+        (1, true, 1, 1),
+
+        (2, true, null, 1),
+        (2, true, null, 2),
+        (2, true, null, 3);
+

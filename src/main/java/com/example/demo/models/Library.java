@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -41,6 +42,9 @@ public class Library {
 
     @ManyToMany(mappedBy = "libraries")
     List<Person> personList;
+
+    @OneToMany(mappedBy = "library", cascade = CascadeType.ALL)
+    private List<BookCopy> bookCopies = new ArrayList<>();
 
     public Library(String name, String address) {
         this.name = name;

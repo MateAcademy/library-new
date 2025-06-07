@@ -3,6 +3,7 @@ package com.example.demo.controller.admin;
 import com.example.demo.dto.PersonFormDTO;
 import com.example.demo.dto.PersonResponseDTO;
 import com.example.demo.errors.PersonNotDeletedException;
+import com.example.demo.errors.PersonNotFoundException;
 import com.example.demo.mapper.PersonMapper;
 import com.example.demo.models.Person;
 import com.example.demo.service.PeopleService;
@@ -40,9 +41,10 @@ public class PeopleController {
                         Model model) {
         final Long libraryId = (Long) session.getAttribute("libraryId");
         if (libraryId == null) {
-            log.warn("libraryId not found in session");
+            log.warn("libraryId not found in session PeopleController");
             return "redirect:/admin/choose-library";
         }
+
         Page<PersonResponseDTO> peoplePage = peopleService.getPeoplePageByLibrary(libraryId, page, pageSize);
 
         model.addAttribute("people", peoplePage.getContent());
@@ -51,7 +53,7 @@ public class PeopleController {
         model.addAttribute("hasPrevious", peoplePage.hasPrevious());
 
         log.info("people count: {}", peoplePage.getTotalElements());
-        return getLibraryView("all-people", libraryId);
+        return this.getLibraryView(libraryId, "all-people");
     }
 
     @GetMapping("{id}")
@@ -70,9 +72,9 @@ public class PeopleController {
         final PersonResponseDTO personResponseDTO = PersonMapper.mapToPersonResponseDTO(personById);
 
         model.addAttribute("person", personResponseDTO);
-        model.addAttribute("books", personById.getBooks());
+        model.addAttribute("books", personById.getBookCopy());
 
-        return getLibraryView("person-details", libraryId);
+        return this.getLibraryView(libraryId, "person-details");
     }
 
     @GetMapping("new")
@@ -97,16 +99,13 @@ public class PeopleController {
 
     @GetMapping("{id}/edit")
     public String showEditForm(@PathVariable Long id, HttpSession session, Model model) {
-        final Person person1 = peopleService.getPersonById(id).orElseThrow();
-        final PersonResponseDTO person = PersonMapper.mapToPersonResponseDTO(person1);
-        model.addAttribute("person", person);
-        Long libraryId = (Long) session.getAttribute("libraryId");
+        final Person person = peopleService.getPersonById(id).orElseThrow(()->new PersonNotFoundException(id));
+        final PersonResponseDTO personResponseDTO = PersonMapper.mapToPersonResponseDTO(person);
+        final Long libraryId = (Long) session.getAttribute("libraryId");
 
-        return getLibraryView("edit-person", libraryId);
-//todo: разобраться:
-//        } else {
-//            return "/admin/person-not-found";
-//        }
+        model.addAttribute("person", personResponseDTO);
+
+        return this.getLibraryView(libraryId, "edit-person");
     }
 
     @PatchMapping
@@ -121,7 +120,7 @@ public class PeopleController {
             bindingResult.getAllErrors().forEach(System.out::println);
 
             long libraryId = (long) session.getAttribute("libraryId");
-            return this.getLibraryView("edit-person", libraryId);
+            return this.getLibraryView(libraryId, "edit-person");
         }
 
         final Person updatePerson = PersonMapper.mapToPersonResponseDTO(person);
@@ -158,12 +157,7 @@ public class PeopleController {
         return "redirect:/admin/people";
     }
 
-    private String getLibraryView(String viewName, Long libraryId) {
-        return new StringBuilder()
-                .append("library-")
-                .append(libraryId)
-                .append("/")
-                .append(viewName)
-                .toString();
+    private String getLibraryView(Long libraryId, String viewName) {
+        return "library-%d/%s".formatted(libraryId, viewName);
     }
 }
