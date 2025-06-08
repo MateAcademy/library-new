@@ -36,7 +36,6 @@ public class BookController {
     final BookService bookService;
     final BookValidator bookValidator;
 
-
     @GetMapping
     public String index(@RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "20") int size,
@@ -48,7 +47,7 @@ public class BookController {
             return "redirect:/admin/choose-library";
         }
 
-        Page<BookResponseDTO> booksPage = bookService.getBooksPage(page, size);
+        Page<BookResponseDTO> booksPage = bookService.getBooksPage(page, size, libraryId);
 
         model.addAttribute("books", booksPage.getContent());
         model.addAttribute("currentPage", page);

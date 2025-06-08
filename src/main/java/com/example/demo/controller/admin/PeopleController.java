@@ -36,9 +36,9 @@ public class PeopleController {
 
     @GetMapping
     public String show(@RequestParam(defaultValue = "0") Integer page,
-                        @RequestParam(defaultValue = "20") Integer pageSize,
-                        HttpSession session,
-                        Model model) {
+                       @RequestParam(defaultValue = "20") Integer pageSize,
+                       HttpSession session,
+                       Model model) {
         final Long libraryId = (Long) session.getAttribute("libraryId");
         if (libraryId == null) {
             log.warn("libraryId not found in session PeopleController");
@@ -99,7 +99,7 @@ public class PeopleController {
 
     @GetMapping("{id}/edit")
     public String showEditForm(@PathVariable Long id, HttpSession session, Model model) {
-        final Person person = peopleService.getPersonById(id).orElseThrow(()->new PersonNotFoundException(id));
+        final Person person = peopleService.getPersonById(id).orElseThrow(() -> new PersonNotFoundException(id));
         final PersonResponseDTO personResponseDTO = PersonMapper.mapToPersonResponseDTO(person);
         final Long libraryId = (Long) session.getAttribute("libraryId");
 
@@ -133,16 +133,15 @@ public class PeopleController {
 
     @DeleteMapping("{id}")
     public String delete(@PathVariable Long id, HttpSession session) {
-//todo: переделать
-        try {
-            boolean isSelfDeleted =  peopleService.delete(id, session);
-            if (isSelfDeleted) {
-                return "redirect:/logout";
-            }
-            return "/admin/success-delete-person-page";
-        } catch (PersonNotDeletedException e) {
-            return "/admin/person-not-found";
+        boolean isSelfDeleted = peopleService.delete(id, session);
+        if (isSelfDeleted) {
+            return "redirect:/logout";
         }
+
+        return "/admin/success-delete-person-page";
+//        } catch (PersonNotDeletedException e) {
+//            return "/admin/person-not-found";
+//        }
     }
 
     @GetMapping("insert1000People")

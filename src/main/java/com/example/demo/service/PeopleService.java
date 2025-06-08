@@ -93,7 +93,7 @@ public class PeopleService {
         return false;
     }
 
-    @Transactional
+
     protected void deletePersonFromLibrary(@NonNull Person person, @NonNull Long libraryId, @NonNull String personEmail) {
 //todo: проверить когда будут книги смогу ли удалить человека
         if (!person.getBookCopy().isEmpty()) {

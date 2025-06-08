@@ -7,7 +7,8 @@ import java.util.Optional;
 
 public interface BookCopyRepository {
 
-    int countByBookId(Long bookId);
+    Integer countByBookId(Long bookId);
+    Integer countByBookIdInLibrary(Long bookId, Long libraryId);
     void saveAll(List<BookCopy> copies);
     void assignBookCopy(Long copyId, Long personId);
     void unassignBookCopy(Long copyId);

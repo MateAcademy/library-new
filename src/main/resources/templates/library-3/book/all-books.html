@@ -73,6 +73,16 @@
       background: #0056b3;
       transform: scale(1.05);
     }
+
+    .text-red {
+      color: red;
+      font-weight: bold;
+    }
+
+    .text-green {
+      color: green;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -83,6 +93,12 @@
     <p><strong>Автор:</strong> <span th:text="${book.author}"></span></p>
     <p><strong>Год издания:</strong> <span th:text="${book.year}"></span></p>
     <p><strong>Количество:</strong> <span th:text="${book.totalCopies}">0</span></p>
+    <p>
+      <strong>Именно в этой библиотеке сколько экземпляров:</strong>
+      <span th:text="${book.inLibraryCopies} ?: 0"
+            th:class="${book.inLibraryCopies == 0} ? 'text-red' : 'text-green'">0</span>
+    </p>
+
   </div>
 </div>
 

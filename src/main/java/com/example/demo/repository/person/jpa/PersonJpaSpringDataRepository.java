@@ -19,11 +19,11 @@ public interface PersonJpaSpringDataRepository extends JpaRepository<Person, Lon
     @Query("SELECT MAX(p.id) FROM Person p")
     Optional<Long> findMaxPersonId();
 
-    @EntityGraph(attributePaths = {"books.book", "libraries"})
+    @EntityGraph(attributePaths = {"bookCopy.book", "libraries"})
     @Query("SELECT p FROM Person p JOIN p.libraries l WHERE l.libraryId = :libraryId")
     Page<Person> findByLibraryIdWithBooksAndLibraries(Long libraryId, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"books.book", "libraries"})
+    @EntityGraph(attributePaths = {"bookCopy.book", "libraries"})
     @Query("SELECT p FROM Person p WHERE p.id = :id")
     Optional<Person> findByIdWithBooksAndLibraries(Long id);
 }

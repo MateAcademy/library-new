@@ -123,27 +123,27 @@
 </div>
 
 <div th:each="copy : ${copies}" class="card">
-    <p><strong>ID экземпляра:</strong> <span th:text="${copy.bookCopyId}"></span></p>
+    <p><strong>ID экземпляра:</strong> <span th:text="${copy.id}"></span></p>
     <p>
         <strong>Статус:</strong>
         <span th:if="${copy.owner == null}">Свободен</span>
         <span th:if="${copy.owner != null}">
         книга у
         <span th:text="${copy.owner.name}">Имя</span>
-        (<span th:text="${copy.owner.personMediaId}">ID</span>)
+        (<span th:text="${copy.owner.mediaId}">ID</span>)
     </span>
     </p>
 
 
     <div th:if="${copy.owner == null}">
         <form th:action="@{/admin/book-copy/assign}" method="post">
-            <input type="hidden" name="copyId" th:value="${copy.bookCopyId}"/>
+            <input type="hidden" name="copyId" th:value="${copy.id}"/>
             <input type="hidden" name="bookId" th:value="${copy.book.bookId}"/>
             <label>Назначить человеку:</label>
             <select name="personId" required>
                 <option value="" disabled selected>Выберите человека</option>
                 <option th:each="person : ${people}"
-                        th:value="${person.personId}"
+                        th:value="${person.id}"
                         th:text="${person.name}"></option>
             </select>
             <button class="btn btn-green" type="submit">Назначить</button>
@@ -152,7 +152,7 @@
 
     <div th:if="${copy.owner != null}">
         <form th:action="@{/admin/book-copy/unassign}" method="post">
-            <input type="hidden" name="copyId" th:value="${copy.bookCopyId}"/>
+            <input type="hidden" name="copyId" th:value="${copy.id}"/>
             <input type="hidden" name="bookId" th:value="${copy.book.bookId}"/>
             <button class="btn btn-danger" type="submit">Освободить</button>
         </form>

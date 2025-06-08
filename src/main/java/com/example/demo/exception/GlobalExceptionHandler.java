@@ -4,8 +4,10 @@ import com.example.demo.errors.BookNotDeletedException;
 import com.example.demo.errors.PersonNotDeletedException;
 import com.example.demo.errors.PersonNotFoundException;
 import com.example.demo.notification.ClientRequestException;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import com.example.demo.notification.TranslationService;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -19,32 +21,21 @@ import java.util.Arrays;
 @Slf4j
 @ControllerAdvice
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-
-    private final TranslationService translationService;
-//    @ResponseStatus(HttpStatus.NOT_FOUND)
-//    @ExceptionHandler(NoSuchBucketException.class)
-//    public ServiceErrorResponse exception(NoSuchBucketException exception) {
-//        log.warn("NoSuchBucketException: ", exception);
-//        return ServiceErrorResponse.builder()
-//            .timestamp(LocalDateTime.now().toString())
-//            .statusCode(HttpStatus.NOT_FOUND.value())
-//            .message("No such bucket")
-//            .build();
-//    }
-
+    final TranslationService translationService;
 
     @ExceptionHandler(PersonNotFoundException.class)
     public String handlePersonNotFound(PersonNotFoundException ex) {
-        log.error(ex.getMessage());
+        log.warn(ex.getMessage());
         return "/admin/person-not-found";
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(PersonNotDeletedException.class)
-    public String exception(PersonNotDeletedException exception) {
-        //log.warn("NoSuchBucketException: ", exception);
+    public String exception(PersonNotDeletedException ex) {
+        log.warn(ex.getMessage());
         return "/admin/person-not-deleted";
     }
 

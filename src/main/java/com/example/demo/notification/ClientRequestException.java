@@ -12,6 +12,13 @@ public class ClientRequestException extends IllegalStateException {
     private final Exception  cause;
     private final Object[] args;
 
+    public ClientRequestException(ExceptionMessage exceptionMessage) {
+        super(exceptionMessage.name());
+        this.exceptionMessage = exceptionMessage;
+        this. cause =  null;
+        this.args = null;
+    }
+
     public ClientRequestException(ExceptionMessage exceptionMessage, Exception cause, Object... args) {
         super(exceptionMessage.name());
         this.exceptionMessage = exceptionMessage;

@@ -10,6 +10,7 @@ import com.example.demo.repository.book.BookCopyRepository;
 import com.example.demo.repository.book.BookRepository;
 import com.example.demo.mapper.BookMapper;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,22 +38,24 @@ public class BookService {
     final BookCopyRepository bookCopyRepository;
     final BookMapper bookMapper;
 
-    public Page<BookResponseDTO> getBooksPage(int page, int size) {
+    public Page<BookResponseDTO> getBooksPage(@NotNull Integer page, @NotNull Integer size, @NotNull Long libraryId) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Book> books = bookRepository.findAll(pageable);
 
         List<BookResponseDTO> responses = books.getContent().stream()
-            .map(book -> {
-                int copies = bookCopyRepository.countByBookId(book.getBookId());
-                return new BookResponseDTO(
-                    book.getBookId(),
-                    book.getTitle(),
-                    book.getAuthor(),
-                    book.getYear(),
-                    copies
-                );
-            })
-            .toList();
+                .map(book -> {
+                    Integer copies = bookCopyRepository.countByBookId(book.getBookId());
+                    Integer inLibraryCopies = bookCopyRepository.countByBookIdInLibrary(book.getBookId(), libraryId);
+                    return new BookResponseDTO(
+                            book.getBookId(),
+                            book.getTitle(),
+                            book.getAuthor(),
+                            book.getYear(),
+                            copies,
+                            inLibraryCopies
+                    );
+                })
+                .toList();
 
         return new PageImpl<>(responses, books.getPageable(), books.getTotalElements());
     }
@@ -65,12 +69,12 @@ public class BookService {
         bookRepository.save(book);
 
         List<BookCopy> copies = IntStream.range(0, copyCount)
-            .mapToObj(i -> {
-                BookCopy copy = new BookCopy();
-                copy.setBook(book);
-                return copy;
-            })
-            .collect(Collectors.toList());
+                .mapToObj(i -> {
+                    BookCopy copy = new BookCopy();
+                    copy.setBook(book);
+                    return copy;
+                })
+                .collect(Collectors.toList());
 
         bookCopyRepository.saveAll(copies);
     }
@@ -80,23 +84,13 @@ public class BookService {
     }
 
     public void delete(@NonNull Long id) {
-        Optional<Book> bookById = bookRepository.findById(id);
+        Book book = bookRepository.findById(id).orElseThrow(()->new ClientRequestException(ExceptionMessage.EXCEPTION_BOOK_NOT_FOUND));
 
-        if (bookById.isEmpty()) {
-            //throw new BookNotDeletedException("There is no such book in the database with id= " + id);
-            try{
-                throw new IOException("test");
-            } catch (IOException ex) {
-                throw new ClientRequestException(ExceptionMessage.EXCEPTION_IMPORT_FILE_READ_FAILED, ex, 3L);
-                //throw new IllegalStateException(ExceptionMessage.EXCEPTION_IMPORT_FILE_READ_FAILED.name(), ex);
-            }
-
-        }
 
         List<BookCopy> allCopies = bookCopyRepository.findAllWithOwnerByBookId(id);
 
         boolean anyAssigned = allCopies.stream()
-            .anyMatch(copy -> copy.getOwner() != null);
+                .anyMatch(copy -> copy.getOwner() != null);
 
         if (anyAssigned) {
             throw new BookNotDeletedException("Unable to delete book: there are checked out copies");

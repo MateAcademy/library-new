@@ -6,7 +6,6 @@ import com.example.demo.dto.PersonFormDTO;
 import com.example.demo.dto.PersonResponseDTO;
 import com.example.demo.models.Person;
 import jakarta.validation.constraints.NotNull;
-import lombok.NonNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,10 +14,18 @@ import java.util.stream.Collectors;
 
 public class PersonMapper {
 
+    public static List<PersonResponseDTO> mapToPersonResponseDTOList(List<Person> people) {
+        if (people == null || people.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return people.stream().map(PersonMapper::mapToPersonResponseDTO).collect(Collectors.toList());
+    }
+
     public static PersonResponseDTO mapToPersonResponseDTO(Person person) {
-//        List<BookResponseDTO> books = person.getBooks().stream()
+//        List<BookResponseDTO> books = person.getBookCopy().stream()
 //                .map(bookCopy -> new BookResponseDTO(
-//                        bookCopy.getBookCopyId(),
+//                        bookCopy.getId(),
 //                        bookCopy.getBook().getTitle(),
 //                        bookCopy.getBook().getAuthor(),
 //                        bookCopy.getBook().getYear()
@@ -45,15 +52,7 @@ public class PersonMapper {
         );
     }
 
-    public static List<PersonResponseDTO> mapToPersonResponseDTOList(List<Person> people) {
-        if (people == null || people.isEmpty()) {
-            return Collections.emptyList();
-        }
 
-        return people.stream()
-                .map(PersonMapper::mapToPersonResponseDTO)
-                .collect(Collectors.toList());
-    }
 
 
     public static Person mapToPersonResponseDTO(@NotNull PersonResponseDTO dto) {

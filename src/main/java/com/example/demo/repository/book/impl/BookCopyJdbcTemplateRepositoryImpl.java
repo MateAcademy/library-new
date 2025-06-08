@@ -24,9 +24,14 @@ public class BookCopyJdbcTemplateRepositoryImpl implements BookCopyRepository {
     final JdbcTemplate jdbcTemplate;
 
     @Override
-    public int countByBookId(Long bookId) {
+    public Integer countByBookId(Long bookId) {
         String sql = "SELECT COUNT(*) FROM book_copy WHERE book_id = ?";
         return jdbcTemplate.queryForObject(sql, Integer.class, bookId);
+    }
+
+    @Override
+    public Integer countByBookIdInLibrary(Long bookId, Long libraryId) {
+        return 0;
     }
 
     @Override

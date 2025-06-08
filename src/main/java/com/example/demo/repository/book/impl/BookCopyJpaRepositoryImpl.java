@@ -19,8 +19,13 @@ public class BookCopyJpaRepositoryImpl implements BookCopyRepository {
     private final BookCopyJpaSpringDataRepository jpaRepository;
 
     @Override
-    public int countByBookId(Long bookId) {
+    public Integer countByBookId(Long bookId) {
         return jpaRepository.countByBook_BookId(bookId);
+    }
+
+    @Override
+    public Integer countByBookIdInLibrary(Long bookId, Long libraryId) {
+        return jpaRepository.countByBook_BookIdAndLibrary_LibraryId(bookId, libraryId);
     }
 
     @Override

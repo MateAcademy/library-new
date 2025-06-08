@@ -11,6 +11,8 @@ public interface BookCopyJpaSpringDataRepository extends JpaRepository<BookCopy,
 
     int countByBook_BookId(Long bookId);
 
+    int countByBook_BookIdAndLibrary_LibraryId(Long bookId, Long libraryId);
+
     List<BookCopy> findByBook_BookIdAndIsAvailableTrue(Long bookId);
 
     List<BookCopy> findByBook_BookId(Long bookId);
