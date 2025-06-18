@@ -36,7 +36,6 @@ public class BookService {
 
     final BookRepository bookRepository;
     final BookCopyRepository bookCopyRepository;
-    final BookMapper bookMapper;
 
     public Page<BookResponseDTO> getBooksPage(@NotNull Integer page, @NotNull Integer size, @NotNull Long libraryId) {
         Pageable pageable = PageRequest.of(page, size);

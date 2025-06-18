@@ -1,6 +1,5 @@
 package com.example.demo.models;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,7 +16,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
@@ -28,7 +26,6 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.BatchSize;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -54,21 +51,22 @@ public class Person {
     Long id;
 
     @Column(name = "media_id")
+    @NotBlank(message = "MediaId should not be empty")
     String mediaId;
 
+    @Column(name = "name")
     @NotBlank(message = "Name should not be empty")
     @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
-    @Column(name = "name")
     String name;
 
+    @Column(name = "age")
     @Min(value = 0, message = "Age should be greater then 0")
     @Max(value = 120, message = "Age should be less then 120")
-    @Column(name = "age")
     Integer age;
 
+    @Column(name = "email", unique = true)
     @NotBlank(message = "Email should not be empty")
     @Email
-    @Column(name = "email")
     String email;
 
     @NotBlank(message = "Password should not be empty")

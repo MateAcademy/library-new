@@ -8,15 +8,12 @@ spring:
     name: ${PROJECT_NAME:library-app}
   profiles:
     active: ${PROFILES_DB:dev}
-  sql:
-    init:
-      mode: always
   jpa:
-    defer-datasource-initialization: true
     show-sql: true
     open-in-view: false
     hibernate:
       ddl-auto: create # или update
+    defer-datasource-initialization: true
     properties:
       generate_statistics: true
       hibernate:
@@ -24,7 +21,9 @@ spring:
           batch_size: 100
         order_inserts: true
         order_updates: true
-
+  sql:
+    init:
+      mode: always
   datasource:
     url: ${DB_URL}
     username: ${DB_USERNAME}
