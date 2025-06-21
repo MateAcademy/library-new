@@ -2,7 +2,6 @@ package com.example.demo.controller.admin;
 
 import com.example.demo.dto.PersonFormDTO;
 import com.example.demo.dto.PersonResponseDTO;
-import com.example.demo.errors.PersonNotDeletedException;
 import com.example.demo.errors.PersonNotFoundException;
 import com.example.demo.mapper.PersonMapper;
 import com.example.demo.models.Person;

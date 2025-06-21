@@ -33,7 +33,7 @@ import java.util.Set;
 @Table(
     name = "person",
     indexes = {
-        @Index(name = "idx_person_media_id", columnList = "person_media_id")
+        @Index(name = "idx_person_media_id", columnList = "person_media_id", unique = true)
     }
 )
 @Getter

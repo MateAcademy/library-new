@@ -31,3 +31,5 @@ Used multiple Spring profiles, selectable via the configuration file</span>
 <span style="color:#6495ED">Applying AOP (Aspect-Oriented Programming)</span>
 
 <span style="color:#6495ED">Managing Authentication and Authorization with Spring Security</span>
+
+<span style="color:#6495ED">Створив адаптивні і кросбраузерні веб сторінки</span>

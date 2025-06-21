@@ -63,7 +63,7 @@ public class PeopleService {
         return personRepository.findByIdWithBooksAndLibraries(id);
     }
 
-    public void save(@NonNull Person person, HttpSession session) {
+    public void save(@NonNull Person person, @NonNull HttpSession session) {
         this.setCurrentLibrary(person, session);
 
         final String nextPersonMediaId = this.getNextPersonMediaId();

@@ -5,11 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface PersonJpaSpringDataRepository extends JpaRepository<Person, Long> {
+public interface PersonJpaSpringDataRepository extends JpaRepository<Person, Long>, JpaSpecificationExecutor<Person> {
 
     @EntityGraph(attributePaths = "libraries")
     Optional<Person> findByEmailAndPassword(String email, String password);
