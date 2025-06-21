@@ -6,5 +6,6 @@ import lombok.Data;
 public class PersonRequestDTO {
 
     private String email;
-        private String password;
+    private String password;
+
 }
