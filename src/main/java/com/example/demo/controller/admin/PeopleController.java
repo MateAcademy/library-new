@@ -1,6 +1,6 @@
 package com.example.demo.controller.admin;
 
-import com.example.demo.dto.PersonFormDTO;
+import com.example.demo.dto.CreatePersonDTO;
 import com.example.demo.dto.PersonResponseDTO;
 import com.example.demo.errors.PersonNotFoundException;
 import com.example.demo.mapper.PersonMapper;
@@ -77,20 +77,20 @@ public class PeopleController {
     }
 
     @GetMapping("new")
-    public String newPerson(@ModelAttribute PersonFormDTO personFormDTO) {
+    public String newPerson(@ModelAttribute CreatePersonDTO createPersonDTO) {
         return "people/new-person";
     }
 
     @PostMapping
-    public String create(@ModelAttribute @Valid PersonFormDTO personFormDTO,
+    public String create(@ModelAttribute @Valid CreatePersonDTO createPersonDTO,
                          BindingResult bindingResult, HttpSession session) {  // @RequestParam(required = false) String name
-        personFormDTOValidator.validate(personFormDTO, bindingResult);
+        personFormDTOValidator.validate(createPersonDTO, bindingResult);
 
         if (bindingResult.hasErrors()) {
             return "/people/new-person";
         }
 
-        final Person person = PersonMapper.mapToPersonFromDTO(personFormDTO);
+        final Person person = PersonMapper.mapToPersonFromDTO(createPersonDTO);
 
         peopleService.save(person, session);
         return "/admin/success-create-person-page";

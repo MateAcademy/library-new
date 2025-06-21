@@ -8,11 +8,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 @AllArgsConstructor
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PersonResponseDTO {
 
     @NotNull(message = "ID must not be null")

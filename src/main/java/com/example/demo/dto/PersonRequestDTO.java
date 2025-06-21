@@ -1,11 +1,14 @@
 package com.example.demo.dto;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PersonRequestDTO {
 
-    private String email;
-    private String password;
+    String email;
+    String password;
 
 }

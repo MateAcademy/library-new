@@ -1,7 +1,6 @@
 package com.example.demo.utils.validators;
 
-import com.example.demo.dto.PersonFormDTO;
-import com.example.demo.dto.PersonResponseDTO;
+import com.example.demo.dto.CreatePersonDTO;
 import com.example.demo.repository.person.PersonRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,27 +20,32 @@ public class PersonFormDTOValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return PersonFormDTO.class.equals(clazz);
+        return CreatePersonDTO.class.equals(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        PersonFormDTO person = (PersonFormDTO) target;
+        CreatePersonDTO person = (CreatePersonDTO) target;
 
-        // Если новая запись (ID == null)
-        if (person.getId() == null) {
-            if (personRepository.findByEmail(person.getEmail()).isPresent()) {
-                errors.rejectValue("email", "400 Error", "Person with this email already exists");
-            }
-        } else {
-            // Обновление — проверка, отличается ли email
-            personRepository.findByPersonId(person.getId()).ifPresent(existingPerson -> {
-                if (!Objects.equals(existingPerson.getEmail(), person.getEmail())) {
-                    if (personRepository.findByEmail(person.getEmail()).isPresent()) {
-                        errors.rejectValue("email", "400 Error", "Person with this email already exists");
-                    }
-                }
-            });
+
+        if (personRepository.findByEmail(person.getEmail()).isPresent()) {
+            errors.rejectValue("email", "400 Error", "Person with this email already exists");
         }
+
+//        // Если новая запись (ID == null)
+//        if (person.getId() == null) {
+//            if (personRepository.findByEmail(person.getEmail()).isPresent()) {
+//                errors.rejectValue("email", "400 Error", "Person with this email already exists");
+//            }
+//        } else {
+//            // Обновление — проверка, отличается ли email
+//            personRepository.findByPersonId(person.getId()).ifPresent(existingPerson -> {
+//                if (!Objects.equals(existingPerson.getEmail(), person.getEmail())) {
+//                    if (personRepository.findByEmail(person.getEmail()).isPresent()) {
+//                        errors.rejectValue("email", "400 Error", "Person with this email already exists");
+//                    }
+//                }
+//            });
+//        }
     }
 }
