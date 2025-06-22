@@ -6,7 +6,7 @@ import com.example.demo.errors.PersonNotFoundException;
 import com.example.demo.mapper.PersonMapper;
 import com.example.demo.models.Person;
 import com.example.demo.service.PeopleService;
-import com.example.demo.utils.validators.PersonFormDTOValidator;
+import com.example.demo.utils.validators.CreatePersonDTOValidator;
 import com.example.demo.utils.validators.PersonValidator;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -31,7 +31,7 @@ public class PeopleController {
 
     final PeopleService peopleService;
     final PersonValidator personValidator;
-    final PersonFormDTOValidator personFormDTOValidator;
+    final CreatePersonDTOValidator createPersonDTOValidator;
 
     @GetMapping
     public String show(@RequestParam(defaultValue = "0") Integer page,
@@ -78,16 +78,16 @@ public class PeopleController {
 
     @GetMapping("new")
     public String newPerson(@ModelAttribute CreatePersonDTO createPersonDTO) {
-        return "people/new-person";
+        return "/admin/new-person";
     }
 
     @PostMapping
     public String create(@ModelAttribute @Valid CreatePersonDTO createPersonDTO,
                          BindingResult bindingResult, HttpSession session) {  // @RequestParam(required = false) String name
-        personFormDTOValidator.validate(createPersonDTO, bindingResult);
+        createPersonDTOValidator.validate(createPersonDTO, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            return "/people/new-person";
+            return "/admin/new-person";
         }
 
         final Person person = PersonMapper.mapToPersonFromDTO(createPersonDTO);
@@ -138,9 +138,6 @@ public class PeopleController {
         }
 
         return "/admin/success-delete-person-page";
-//        } catch (PersonNotDeletedException e) {
-//            return "/admin/person-not-found";
-//        }
     }
 
     @GetMapping("insert1000People")

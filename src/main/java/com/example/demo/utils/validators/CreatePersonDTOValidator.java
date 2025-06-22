@@ -9,12 +9,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import java.util.Objects;
-
 @Component
-@FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
-public class PersonFormDTOValidator implements Validator {
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class CreatePersonDTOValidator implements Validator {
 
     final PersonRepository personRepository;
 
@@ -26,7 +24,6 @@ public class PersonFormDTOValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         CreatePersonDTO person = (CreatePersonDTO) target;
-
 
         if (personRepository.findByEmail(person.getEmail()).isPresent()) {
             errors.rejectValue("email", "400 Error", "Person with this email already exists");
