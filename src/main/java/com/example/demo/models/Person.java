@@ -5,7 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -15,9 +14,6 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,12 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(
-    name = "person",
-    indexes = {
-        @Index(name = "idx_media_id", columnList = "media_id", unique = true),
-    }
-)
+@Table(name = "person")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -47,39 +38,28 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "person_seq")
     @SequenceGenerator(name = "person_seq", sequenceName = "person_id_seq", allocationSize = 100)
-    @Column(name = "id", columnDefinition = "bigint default nextval('person_id_seq')")
+    @Column(name = "id")
     Long id;
 
-    @Column(name = "media_id")
-    @NotBlank(message = "MediaId should not be empty")
+    @Column(name = "media_id", unique = true, nullable = false)
     String mediaId;
 
-    @Column(name = "name")
-    @NotBlank(message = "Name should not be empty")
-    @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
+    @Column(name = "name", length = 50, nullable = false)
     String name;
 
-    @Column(name = "age")
-    @Min(value = 0, message = "Age should be greater then 0")
-    @Max(value = 120, message = "Age should be less then 120")
+    @Column(name = "age", nullable = false)
+    @Min(1)
+    @Max(120)
     Integer age;
 
-    @Column(name = "email", unique = true)
-    @NotBlank(message = "Email should not be empty")
     @Email
+    @Column(name = "email", unique = true, nullable = false)
     String email;
 
-    @NotBlank(message = "Password should not be empty")
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     String password;
 
-    @NotBlank(message = "Address should not be empty")
-    @Size(min = 10, max = 50, message = "Address should be between 2 and 30 characters")
-    @Pattern(
-        regexp = "^[\\p{L}\\-]+, [\\p{L}\\- ]+, \\d{6}$",
-        message = "Адрес должен быть в формате: 'Страна, Город, 123456'"
-    )
-    @Column(name = "address")
+    @Column(name = "address", length = 100, nullable = false)
     String address;
 
     @ManyToMany
@@ -93,7 +73,7 @@ public class Person {
     @OneToMany(mappedBy = "owner")
     List<BookCopy> bookCopy;
 
-    public Person(String mediaId, String name, Integer age, String email, String password, String address ) {
+    public Person(String mediaId, String name, Integer age, String email, String password, String address) {
         this.mediaId = mediaId;
         this.name = name;
         this.age = age;
