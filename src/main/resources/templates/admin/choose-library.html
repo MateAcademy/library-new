@@ -134,6 +134,60 @@
         .logout-link {
             text-decoration: none; /* ✅ убирает подчёркивание */
         }
+
+        .extra-buttons {
+            margin-top: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+
+            background-image: url('/fon/blue.jpg'); /* 🔸 путь к фону */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .extra-buttons-container {
+            max-width: 960px; /* как у контейнера сверху */
+            margin: 30px auto;
+            padding: 20px 30px;
+            border-radius: 12px;
+            background-image: url('/fon/blue.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: rgba(255, 255, 255, 0.85); /* fallback */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .square-button {
+            min-width: 220px;
+            height: 60px;
+            background: linear-gradient(135deg, #28a745, #218838);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .square-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+        }
     </style>
     <script>
        function validateLibrarySelection() {
@@ -177,6 +231,18 @@
             </button>
         </div>
     </form>
+</div>
+
+<div class="extra-buttons-container">
+    <a href="/admin/crud-platforms" class="square-button">
+        CRUD for Platforms/OS/Versions
+    </a>
+    <a href="/admin/test-cases" class="square-button">
+        TestCases
+    </a>
+    <a href="/admin/audit-criteria" class="square-button">
+        AuditCriteria
+    </a>
 </div>
 
 <script>

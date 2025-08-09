@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.models.Library;
-import com.example.demo.models.Person;
+import com.example.demo.model.Library;
+import com.example.demo.model.Person;
 import com.example.demo.repository.library.LibraryRepository;
 import com.example.demo.repository.person.PersonRepository;
 import jakarta.servlet.http.HttpSession;

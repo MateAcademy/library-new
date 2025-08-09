@@ -1,7 +1,7 @@
 package com.example.demo.controller.admin;
 
 import com.example.demo.dto.BookResponseDTO;
-import com.example.demo.models.Book;
+import com.example.demo.model.Book;
 import com.example.demo.service.BookService;
 
 import com.example.demo.utils.validators.BookValidator;

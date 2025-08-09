@@ -2,13 +2,12 @@ package com.example.demo.service;
 
 import com.example.demo.dto.BookResponseDTO;
 import com.example.demo.errors.BookNotDeletedException;
-import com.example.demo.models.Book;
-import com.example.demo.models.BookCopy;
+import com.example.demo.model.Book;
+import com.example.demo.model.BookCopy;
 import com.example.demo.notification.ClientRequestException;
 import com.example.demo.notification.ExceptionMessage;
 import com.example.demo.repository.book.BookCopyRepository;
 import com.example.demo.repository.book.BookRepository;
-import com.example.demo.mapper.BookMapper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -21,8 +20,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

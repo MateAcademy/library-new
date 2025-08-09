@@ -1,6 +1,6 @@
 package com.example.demo.utils.validators;
 
-import com.example.demo.models.Book;
+import com.example.demo.model.Book;
 import com.example.demo.repository.book.BookRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

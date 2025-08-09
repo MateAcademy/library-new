@@ -1,7 +1,7 @@
 package com.example.demo.controller.admin;
 
-import com.example.demo.models.Book;
-import com.example.demo.models.BookCopy;
+import com.example.demo.model.Book;
+import com.example.demo.model.BookCopy;
 import com.example.demo.service.BookCopyService;
 import com.example.demo.service.BookService;
 import com.example.demo.service.PeopleService;

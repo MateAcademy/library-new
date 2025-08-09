@@ -1,6 +1,6 @@
 package com.example.demo.repository.person.jpa;
 
-import com.example.demo.models.Person;
+import com.example.demo.model.Person;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;

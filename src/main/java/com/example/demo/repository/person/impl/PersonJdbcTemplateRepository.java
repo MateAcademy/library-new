@@ -1,10 +1,10 @@
 //package com.example.demo.repository.person.impl;
 //
 //import com.example.demo.errors.PersonNotDeletedException;
-//import com.example.demo.models.Book;
-//import com.example.demo.models.BookCopy;
-//import com.example.demo.models.Library;
-//import com.example.demo.models.Person;
+//import com.example.demo.model.Book;
+//import com.example.demo.model.BookCopy;
+//import com.example.demo.model.Library;
+//import com.example.demo.model.Person;
 //import com.example.demo.repository.person.PersonRepository;
 //import lombok.AccessLevel;
 //import lombok.RequiredArgsConstructor;

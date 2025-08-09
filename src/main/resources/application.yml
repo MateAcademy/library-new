@@ -12,7 +12,7 @@ spring:
     show-sql: true
     open-in-view: false
     hibernate:
-      ddl-auto: create # или update
+      ddl-auto: ${DDL_AUTO} # или update
     defer-datasource-initialization: true
     properties:
       generate_statistics: true

@@ -1,8 +1,8 @@
 package com.example.demo.repository.book.impl;
 
-import com.example.demo.models.Book;
-import com.example.demo.models.BookCopy;
-import com.example.demo.models.Person;
+import com.example.demo.model.Book;
+import com.example.demo.model.BookCopy;
+import com.example.demo.model.Person;
 import com.example.demo.repository.book.BookCopyRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

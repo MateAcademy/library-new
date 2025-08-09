@@ -1,6 +1,6 @@
 package com.example.demo.repository.person.impl;
 
-import com.example.demo.models.Person;
+import com.example.demo.model.Person;
 import com.example.demo.repository.person.PersonRepository;
 import com.example.demo.utils.PostgresConnector;
 import lombok.AccessLevel;

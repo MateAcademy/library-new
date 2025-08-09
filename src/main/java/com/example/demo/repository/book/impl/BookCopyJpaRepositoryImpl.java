@@ -1,6 +1,6 @@
 package com.example.demo.repository.book.impl;
 
-import com.example.demo.models.BookCopy;
+import com.example.demo.model.BookCopy;
 import com.example.demo.repository.book.BookCopyRepository;
 import com.example.demo.repository.book.jpa.BookCopyJpaSpringDataRepository;
 import jakarta.transaction.Transactional;

@@ -38,3 +38,26 @@ values  (1, true, null, 1),
         (2, true, null, 2),
         (2, true, null, 3);
 
+INSERT INTO platforms (name) values ('Mobile App');
+
+
+INSERT INTO platforms (name) values ('Desktop App');
+INSERT INTO platforms (name) values ('Website/-Portal');
+
+INSERT INTO platform_operating_systems (name, platform_id) values ('Android', 1);
+INSERT INTO platform_operating_systems (name, platform_id) values ('iOS', 1);
+INSERT INTO platform_operating_systems (name, platform_id) values ('Windows', 2);
+INSERT INTO platform_operating_systems (name, platform_id) values ('MacOS', 2);
+INSERT INTO platform_operating_systems (name, platform_id) values ('Linux', 2);
+
+INSERT INTO operating_system_versions (name, platform_operating_system_id) values ('10', 1);
+INSERT INTO operating_system_versions (name, platform_operating_system_id) values ('11', 1);
+INSERT INTO operating_system_versions (name, platform_operating_system_id) values ('13', 2);
+INSERT INTO operating_system_versions (name, platform_operating_system_id) values ('19', 2);
+INSERT INTO operating_system_versions (name, platform_operating_system_id) values ('7', 3);
+INSERT INTO operating_system_versions (name, platform_operating_system_id) values ('8', 3);
+INSERT INTO operating_system_versions (name, platform_operating_system_id) values ('13',3);
+INSERT INTO operating_system_versions (name, platform_operating_system_id) values ('10.X', 4);
+INSERT INTO operating_system_versions (name, platform_operating_system_id) values ('11', 4);
+INSERT INTO operating_system_versions (name, platform_operating_system_id) values ('12',4);
+INSERT INTO operating_system_versions (name, platform_operating_system_id) values ('Ubuntu 24.04', 5);

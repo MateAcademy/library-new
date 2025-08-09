@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Administration • TestCases</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <style>
+        :root{
+            --bg:#f6f9fb;--card:#fff;--line:#dfe7ee;--text:#1f2d3d;--muted:#7a8a9a;
+            --accent:#1abc9c;--accent-2:#16a085;--danger:#e74c3c;--shadow:0 8px 20px rgba(0,0,0,.06);--radius:14px
+        }
+        *{box-sizing:border-box}
+        body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
+        .wrap{max-width:1200px;margin:24px auto;padding:0 16px}
+        h1{font-size:22px;margin:0 0 16px}
+
+        /* tabs */
+        .tabs{display:flex;gap:16px;margin:6px 0 16px}
+        .tab{padding:10px 14px;border-radius:10px;background:#eef3f7;color:#546372;
+            font-weight:600;text-decoration:none;border:1px solid transparent;transition:.15s ease}
+        .tab.active{background:#e7fbf5;color:#0b7f68;border:1px solid #bff1e6}
+        .tab:hover{background:var(--accent);color:#fff;border-color:var(--accent-2)}
+
+        .board{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+        .head{display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--line);background:#fafcfe}
+        .head h2{margin:0;font-size:16px}
+        .actions{display:flex;gap:8px}
+        .btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:600}
+        .btn.primary{background:var(--accent);color:#fff;border:0}
+        .btn.ghost{background:#eef3f7}
+        .content{padding:8px 0}
+
+        /* tree */
+        .tree{padding:0 8px 12px 8px}
+        .node{border-bottom:1px dashed #eef1f5}
+        .row{display:flex;align-items:center;gap:8px;padding:10px 12px}
+        .row:hover{background:#f7fbfa}
+        .toggle{width:24px;height:24px;border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff}
+        .toggle[aria-expanded="true"]{background:#e9faf6;border-color:#bfeee3}
+        .label{font-weight:600}
+        .muted{color:var(--muted);font-size:12px;margin-left:6px}
+        .children{padding-left:32px;display:none}
+        .children.open{display:block}
+
+        .pill{background:#eef3f7;border:1px solid var(--line);border-radius:999px;padding:2px 8px;font-size:12px;color:#546372;margin-left:auto}
+        .empty{padding:24px;text-align:center;color:var(--muted)}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <h1>Administration</h1>
+
+    <!-- TABS -->
+    <div class="tabs">
+        <a class="tab" href="/admin/crud-platforms">CRUD</a>
+        <a class="tab active" href="/admin/test-cases">TestCases</a>
+        <a class="tab" href="/admin/audit-criteria">AuditCriteria</a>
+        <a class="tab" href="/admin/dictionaries">Dictionaries</a>
+        <a class="tab" href="/admin/audit-area">Audit area</a>
+    </div>
+
+    <div class="board">
+        <div class="head">
+            <h2>Platforms • OS • Versions (select for test cases)</h2>
+            <div class="actions">
+                <button class="btn ghost" onclick="ui.expandAll()">Expand all</button>
+                <button class="btn ghost" onclick="ui.collapseAll()">Collapse all</button>
+                <button class="btn" onclick="ui.clearAll()">Clear</button>
+                <button class="btn primary" onclick="ui.submitSelection()">Apply selection</button>
+            </div>
+        </div>
+        <div class="content">
+            <div id="tree" class="tree"></div>
+            <div id="meta" class="empty">Loading…</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // -------- API ----------
+    const api = {
+        platforms: ()=>fetch(`/admin/platform?page=1&pageSize=1000&sortField=name&sortDirection=asc`).then(r=>r.json()),
+        osByPlatform:(platformId)=>fetch(`/admin/platform-operating-system?platformId=${platformId}&page=1&pageSize=1000&sortField=id&sortDirection=asc`).then(r=>r.json()),
+        versionsByPOS:(posId)=>fetch(`/admin/operating-system-version?platformOperatingSystemId=${posId}&page=1&pageSize=1000&sortField=id&sortDirection=asc`).then(r=>r.json()),
+        applySelection:(payload)=>fetch(`/admin/test-cases/apply`,{
+            method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)
+        })
+    };
+
+    // helpers to read PageResponse
+    const getItems = d => d?.elements ?? d?.items ?? d?.content ?? [];
+
+    // -------- STATE ----------
+    const state = {
+        // данные
+        platforms: [],        // [{id,name, os: [...] }]
+        // выбранные id
+        selPlatforms: new Set(),
+        selPOS: new Set(),
+        selVersions: new Set()
+    };
+
+    const el = id => document.getElementById(id);
+
+    // -------- UI BUILD ----------
+    const ui = {
+        init: async ()=>{
+            const data = await api.platforms();
+            state.platforms = getItems(data).map(p => ({...p, os:null})); // os лениво
+            ui.renderTree();
+        },
+
+        // --- рендер корня
+        renderTree: ()=>{
+            const tree = el('tree'), meta = el('meta');
+            tree.innerHTML = '';
+            if (state.platforms.length === 0){
+                meta.textContent = 'Nothing here yet'; return;
+            }
+            meta.textContent = '';
+            state.platforms.forEach(p => {
+                const node = ui.makePlatformNode(p);
+                tree.appendChild(node);
+            });
+        },
+
+        // --- узел платформы
+        makePlatformNode: (p)=>{
+            const node = document.createElement('div'); node.className='node';
+            const row = document.createElement('div'); row.className='row';
+            const toggle = ui.makeToggle(()=>ui.togglePlatform(p.id, children), 'platform');
+            const cb = ui.makeCheckbox('platform', p.id, checked=>{
+                // каскад вниз
+                if (p.os && Array.isArray(p.os)) {
+                    p.os.forEach(os=>{
+                        ui.setChecked('pos', os.id, checked);
+                        if (os.versions) os.versions.forEach(v=> ui.setChecked('ver', v.id, checked));
+                    });
+                }
+            }, state.selPlatforms.has(p.id));
+            const label = document.createElement('span'); label.className='label'; label.textContent = p.name;
+            const meta = document.createElement('span'); meta.className='pill'; meta.textContent='Platform';
+            row.append(toggle, cb, label, meta);
+            const children = document.createElement('div'); children.className='children'; // сюда OS
+            node.append(row, children);
+            return node;
+        },
+
+        // --- узел OS
+        makeOSNode: (os)=>{
+            const node = document.createElement('div'); node.className='node';
+            const row = document.createElement('div'); row.className='row';
+            const toggle = ui.makeToggle(()=>ui.toggleOS(os.id, children), 'os');
+            const cb = ui.makeCheckbox('pos', os.id, checked=>{
+                if (os.versions) os.versions.forEach(v=> ui.setChecked('ver', v.id, checked));
+            }, state.selPOS.has(os.id));
+            const label = document.createElement('span'); label.className='label'; label.textContent = os.name;
+            const meta = document.createElement('span'); meta.className='pill'; meta.textContent='OS';
+            row.append(toggle, cb, label, meta);
+            const children = document.createElement('div'); children.className='children'; // сюда versions
+            node.append(row, children);
+            return node;
+        },
+
+        // --- узел версии
+        makeVersionRow: (v)=>{
+            const row = document.createElement('div'); row.className='row';
+            const spacer = document.createElement('div'); spacer.style.width='24px'; // вместо toggler
+            const cb = ui.makeCheckbox('ver', v.id, ()=>{}, state.selVersions.has(v.id));
+            const label = document.createElement('span'); label.className='label'; label.textContent = v.name;
+            const meta = document.createElement('span'); meta.className='pill'; meta.textContent='Version';
+            row.append(spacer, cb, label, meta);
+            return row;
+        },
+
+        // --- элементы управления
+        makeToggle: (handler,type)=>{
+            const t = document.createElement('button');
+            t.className='toggle'; t.type='button'; t.setAttribute('aria-expanded','false');
+            t.textContent='›';
+            t.onclick = ()=>{
+                const open = t.getAttribute('aria-expanded')==='true';
+                t.setAttribute('aria-expanded', String(!open));
+                t.textContent = !open ? '⌄' : '›';
+                handler(!open);
+            };
+            return t;
+        },
+
+        makeCheckbox: (kind,id,onChange, preset=false)=>{
+            const cb = document.createElement('input'); cb.type='checkbox';
+            cb.checked = preset;
+            cb.onchange = ()=>{
+                // апдейт стейта
+                ui.setChecked(kind,id,cb.checked,true);
+                onChange && onChange(cb.checked);
+            };
+            cb.dataset.kind = kind; cb.dataset.id=id;
+            return cb;
+        },
+
+        setChecked:(kind,id,checked, fromSelf=false)=>{
+            const set = kind==='platform'?state.selPlatforms : kind==='pos'? state.selPOS : state.selVersions;
+            checked ? set.add(id) : set.delete(id);
+            // Обновить реальный чекбокс, если меняем каскадом
+            if (!fromSelf){
+                const q = `input[type="checkbox"][data-kind="${kind}"][data-id="${id}"]`;
+                const box = document.querySelector(q);
+                if (box) box.checked = checked;
+            }
+            // Поднять indeterminate / родительские статусы
+            ui.refreshParentStates();
+        },
+
+        refreshParentStates: ()=>{
+            // для каждой платформы смотрим дочерние pos/ver
+            document.querySelectorAll('.node>.row input[type="checkbox"][data-kind="platform"]').forEach(cbP=>{
+                const node = cbP.closest('.node');
+                const posBoxes = node.querySelectorAll('.children input[type="checkbox"][data-kind="pos"]');
+                if (posBoxes.length===0){ cbP.indeterminate=false; return; }
+                let checked = 0;
+                posBoxes.forEach(b=>{ if (b.checked) checked++; });
+                cbP.indeterminate = checked>0 && checked<posBoxes.length;
+            });
+            // для каждого pos — по версиям
+            document.querySelectorAll('input[type="checkbox"][data-kind="pos"]').forEach(cbOs=>{
+                const parent = cbOs.closest('.node');
+                const vBoxes = parent.querySelectorAll('.children input[type="checkbox"][data-kind="ver"]');
+                if (vBoxes.length===0){ cbOs.indeterminate=false; return; }
+                let checked = 0; vBoxes.forEach(b=>{ if (b.checked) checked++; });
+                cbOs.indeterminate = checked>0 && checked<vBoxes.length;
+            });
+        },
+
+        // --- раскрытие
+        togglePlatform: async (platformId, container)=>{
+            if (container.classList.contains('open')) { container.classList.remove('open'); return; }
+            // если не загружено — грузим OS
+            const p = state.platforms.find(x=>x.id===platformId);
+            if (!p.os){
+                const data = await api.osByPlatform(platformId);
+                p.os = getItems(data).map(o => ({...o, versions:null}));
+                // отрисовка
+                container.innerHTML='';
+                p.os.forEach(os=> container.appendChild(ui.makeOSNode(os)));
+            }
+            container.classList.add('open');
+        },
+
+        toggleOS: async (posId, container)=>{
+            if (container.classList.contains('open')) { container.classList.remove('open'); return; }
+            // найти OS в state
+            let targetOS = null;
+            state.platforms.forEach(p=>{
+                if (p.os) {
+                    const f = p.os.find(o=>o.id===posId);
+                    if (f) targetOS=f;
+                }
+            });
+            if (!targetOS) return;
+            if (!targetOS.versions){
+                const data = await api.versionsByPOS(posId);
+                targetOS.versions = getItems(data);
+                container.innerHTML='';
+                targetOS.versions.forEach(v=> container.appendChild(ui.makeVersionRow(v)));
+            }
+            container.classList.add('open');
+            ui.refreshParentStates();
+        },
+
+        // --- общие действия
+        expandAll: async ()=>{
+            // раскрыть все платформы
+            const nodes = document.querySelectorAll('.node>.row .toggle');
+            for (const t of nodes){ if (t.getAttribute('aria-expanded')==='false') t.click(); }
+        },
+        collapseAll: ()=>{
+            document.querySelectorAll('.node>.row .toggle').forEach(t=>{
+                if (t.getAttribute('aria-expanded')==='true') t.click();
+            });
+        },
+        clearAll: ()=>{
+            state.selPlatforms.clear(); state.selPOS.clear(); state.selVersions.clear();
+            document.querySelectorAll('.tree input[type="checkbox"]').forEach(b=>{ b.indeterminate=false; b.checked=false; });
+        },
+
+        submitSelection: async ()=>{
+            const payload = {
+                platformIds: Array.from(state.selPlatforms),
+                platformOsIds: Array.from(state.selPOS),
+                versionIds: Array.from(state.selVersions)
+            };
+            try{
+                const resp = await api.applySelection(payload);
+                if (!resp.ok) throw new Error(await resp.text());
+                alert('Selection applied ✔');
+            }catch(e){
+                console.error(e);
+                alert('Failed to apply selection: '+ e.message);
+            }
+        }
+    };
+
+    // start
+    ui.init();
+</script>
+</body>
+</html>

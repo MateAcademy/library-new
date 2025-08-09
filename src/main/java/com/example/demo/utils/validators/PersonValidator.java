@@ -1,7 +1,6 @@
 package com.example.demo.utils.validators;
 
 import com.example.demo.dto.PersonResponseDTO;
-import com.example.demo.models.Person;
 import com.example.demo.repository.person.PersonRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.example.demo.repository.library.impl;
 
-import com.example.demo.models.Library;
+import com.example.demo.model.Library;
 import com.example.demo.repository.library.LibraryRepository;
 import com.example.demo.repository.library.jpa.LibraryJpaSpringDataRepository;
 import lombok.RequiredArgsConstructor;

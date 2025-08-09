@@ -1,6 +1,6 @@
 package com.example.demo.repository.book;
 
-import com.example.demo.models.Book;
+import com.example.demo.model.Book;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

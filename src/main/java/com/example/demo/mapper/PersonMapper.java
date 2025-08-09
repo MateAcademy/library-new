@@ -2,7 +2,7 @@ package com.example.demo.mapper;
 
 import com.example.demo.dto.CreatePersonDTO;
 import com.example.demo.dto.PersonResponseDTO;
-import com.example.demo.models.Person;
+import com.example.demo.model.Person;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Collections;

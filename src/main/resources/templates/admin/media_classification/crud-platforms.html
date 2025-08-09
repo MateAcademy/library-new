@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Administration • Platforms / OS / Versions</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <style>
+        :root{
+            --bg:#f6f9fb; --card:#fff; --line:#dfe7ee; --text:#1f2d3d; --muted:#7a8a9a;
+            --accent:#1abc9c; --accent-2:#16a085; --danger:#e74c3c; --shadow:0 8px 20px rgba(0,0,0,.06); --radius:14px
+        }
+        *{box-sizing:border-box}
+        body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
+        .wrap{max-width:1200px;margin:24px auto;padding:0 16px}
+        h1{font-size:22px;margin:0 0 16px}
+
+        /* tabs */
+        .tabs{display:flex;gap:16px;margin:6px 0 16px}
+        .tab{
+            padding:10px 14px;border-radius:10px;background:#eef3f7;color:#546372;
+            font-weight:600;text-decoration:none;border:1px solid transparent;transition:.15s ease
+        }
+        .tab.active{background:#e7fbf5;color:#0b7f68;border:1px solid #bff1e6}
+        .tab:hover{background:var(--accent);color:#fff;border-color:var(--accent-2)}
+
+        .board{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+        .cols{display:grid;grid-template-columns:1fr 1fr 1fr}
+        .col{border-right:1px solid var(--line);min-height:520px;display:flex;flex-direction:column}
+        .col:last-child{border-right:0}
+        .col-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line);background:#fafcfe}
+        .col-title{font-weight:700}
+        .icon-btn{border:0;background:var(--accent);color:#fff;border-radius:10px;padding:6px 10px;cursor:pointer}
+        .icon-btn:disabled{opacity:.6;cursor:not-allowed}
+        .search{display:flex;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
+        .search input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;outline:none}
+        .list{flex:1;overflow:auto}
+        .item{padding:12px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+        .item .name{font-weight:600}
+        .item .muted{color:var(--muted);font-size:12px}
+        .actions{display:flex;gap:6px}
+        .btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;cursor:pointer}
+        .btn.danger{background:var(--danger);color:#fff;border:0}
+        .empty{flex:1;display:flex;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:24px}
+        .pager{display:flex;gap:8px;justify-content:center;padding:10px;border-top:1px solid var(--line);background:#fafcfe}
+        .pager button{padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer}
+
+        /* активная строка */
+        .item.active{background-color:var(--accent)!important;color:#fff!important}
+        .item.active .muted{color:rgba(255,255,255,.85)!important}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <h1>Administration</h1>
+
+    <!-- TABS: CRUD first, then TestCases, AuditCriteria -->
+    <div class="tabs">
+        <a class="tab active" href="/admin/crud-platforms">CRUD</a>
+        <a class="tab" href="/admin/test-cases">TestCases</a>
+        <a class="tab" href="/admin/audit-criteria">AuditCriteria</a>
+        <a class="tab" href="/admin/dictionaries">Dictionaries</a>
+        <a class="tab" href="/admin/audit-area">Audit area</a>
+    </div>
+
+
+    <div class="board">
+        <div class="cols">
+            <!-- Platforms -->
+            <section class="col" id="col-platforms">
+                <div class="col-head">
+                    <div class="col-title">Platforms</div>
+                    <button class="icon-btn" onclick="ui.addPlatform()">+</button>
+                </div>
+                <div class="search">
+                    <input id="qPlatforms" placeholder="Search platform…" oninput="ui.reloadPlatforms(1)"/>
+                    <span id="metaPlatforms" class="muted"></span>
+                </div>
+                <div class="list" id="listPlatforms"></div>
+                <div class="pager" id="pagerPlatforms"></div>
+            </section>
+
+            <!-- OS -->
+            <section class="col" id="col-os">
+                <div class="col-head">
+                    <div class="col-title">OS</div>
+                    <button class="icon-btn" id="btnAddOs" onclick="ui.addOS()" disabled>+</button>
+                </div>
+                <div class="search">
+                    <input id="qOS" placeholder="Search OS…" oninput="ui.reloadOS(1)"/>
+                    <span id="metaOS" class="muted"></span>
+                </div>
+                <div class="list" id="listOS"><div class="empty">Choose a platform to see the OS</div></div>
+                <div class="pager" id="pagerOS"></div>
+            </section>
+
+            <!-- Versions -->
+            <section class="col" id="col-versions">
+                <div class="col-head">
+                    <div class="col-title">Version</div>
+                    <button class="icon-btn" id="btnAddVersion" onclick="ui.addVersion()" disabled>+</button>
+                </div>
+                <div class="search">
+                    <input id="qVersions" placeholder="Search version…" oninput="ui.reloadVersions(1)"/>
+                    <span id="metaVersions" class="muted"></span>
+                </div>
+                <div class="list" id="listVersions"><div class="empty">Choose an OS to see the versions</div></div>
+                <div class="pager" id="pagerVersions"></div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --------- API (относительные URL) ---------
+    const api = {
+        platforms:(page=1,q='') =>
+            fetch(`/admin/platform?page=${page}&pageSize=10&sortField=name&sortDirection=asc${q?`&q=${encodeURIComponent(q)}`:''}`).then(r=>r.json()),
+        createPlatform:(name) =>
+            fetch(`/admin/platform`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name})}).then(r=>r.json()),
+        updatePlatform:(id,name) =>
+            fetch(`/admin/platform/${id}`, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({id,name})}).then(r=>r.json()),
+        deletePlatform:(id) => fetch(`/admin/platform/${id}`, {method:'DELETE'}),
+
+        os:(platformId,page=1,q='') =>
+            fetch(`/admin/platform-operating-system?platformId=${platformId}&page=${page}&pageSize=10&sortField=id&sortDirection=asc${q?`&q=${encodeURIComponent(q)}`:''}`).then(r=>r.json()),
+        createOS:(platformId,name) =>
+            fetch(`/admin/platform-operating-system`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({platformId,name})}).then(r=>r.json()),
+        updateOS:(id,platformId,name) =>
+            fetch(`/admin/platform-operating-system/${id}`, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({platformId,name})}).then(r=>r.json()),
+        deleteOS:(id) => fetch(`/admin/platform-operating-system/${id}`, {method:'DELETE'}),
+
+        versions:(posId,page=1,q='') =>
+            fetch(`/admin/operating-system-version?platformOperatingSystemId=${posId}&page=${page}&pageSize=10&sortField=id&sortDirection=asc${q?`&q=${encodeURIComponent(q)}`:''}`).then(r=>r.json()),
+        createVersion:(posId,name) =>
+            fetch(`/admin/operating-system-version`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({platformOperatingSystemId:posId,name})}).then(r=>r.json()),
+        updateVersion:(id,name) =>
+            fetch(`/admin/operating-system-version/${id}`, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name})}).then(r=>r.json()),
+        deleteVersion:(id) => fetch(`/admin/operating-system-version/${id}`, {method:'DELETE'})
+    };
+
+
+    // --------- STATE & utils ---------
+    const state={ platformPage:1, platformSelected:null, osPage:1, osSelected:null, versionPage:1 };
+    const el=id=>document.getElementById(id);
+    const setBtnDisabled=(id,dis)=>el(id).disabled=dis;
+    const getItems=d=>d?.elements ?? d?.items ?? d?.content ?? [];
+    const getPage=d=>d?.currentPage ?? d?.page ?? d?.number ?? 1;
+    const getTotal=d=>d?.totalResult ?? d?.total ?? d?.totalElements ?? getItems(d).length;
+    const getSize=d=>d?.pageSize ?? d?.size ?? 10;
+
+    // --------- UI ---------
+    const ui = {
+        // Platforms
+        reloadPlatforms: async(page=1)=>{
+            state.platformPage=page;
+            const q=el('qPlatforms').value.trim();
+            const data=await api.platforms(page,q);
+            ui.renderList('listPlatforms','pagerPlatforms','metaPlatforms',data,(item)=>({
+                id:item.id, name:item.name, subtitle:`ID: ${item.id}`,
+                onClick:()=>ui.selectPlatform(item.id),
+                onEdit:()=>ui.editPlatform(item.id,item.name),
+                onDelete:()=>ui.deletePlatform(item.id)
+            }), state.platformSelected);
+
+            const items=getItems(data);
+            if(!state.platformSelected && items.length>0){ ui.selectPlatform(items[0].id); }
+        },
+        selectPlatform:(id)=>{
+            state.platformSelected=id;
+            setBtnDisabled('btnAddOs',false);
+            ui.reloadPlatforms(state.platformPage); // подсветить активный
+            state.osSelected=null;
+            el('listVersions').innerHTML='<div class="empty">Choose an OS to see the versions</div>';
+            setBtnDisabled('btnAddVersion',true);
+            ui.reloadOS(1);
+        },
+        addPlatform: async()=>{
+            const name=prompt('Platform name:'); if(!name) return;
+            const created=await api.createPlatform(name.trim());
+            state.platformSelected=created.id; setBtnDisabled('btnAddOs',false);
+            await ui.reloadPlatforms(1); await ui.reloadOS(1);
+        },
+        editPlatform: async(id, oldName)=>{
+            const name=prompt('Edit platform name:',oldName); if(!name) return;
+            await api.updatePlatform(id,name.trim()); ui.reloadPlatforms(state.platformPage);
+        },
+        deletePlatform: async(id)=>{
+            if(!confirm('Delete platform and its relations?')) return;
+            await api.deletePlatform(id);
+            if(state.platformSelected===id){
+                state.platformSelected=null;
+                el('listOS').innerHTML='<div class="empty">Choose a platform to see the OS</div>';
+                setBtnDisabled('btnAddOs',true);
+                el('listVersions').innerHTML='<div class="empty">Choose an OS to see the versions</div>';
+                setBtnDisabled('btnAddVersion',true);
+            }
+            await ui.reloadPlatforms(1);
+        },
+
+        // OS
+        reloadOS: async(page=1)=>{
+            if(!state.platformSelected) return;
+            state.osPage=page;
+            const q=el('qOS').value.trim();
+            const data=await api.os(state.platformSelected,page,q);
+            ui.renderList('listOS','pagerOS','metaOS',data,(item)=>({
+                id:item.id, name:item.name, subtitle:`ID: ${item.id}`,
+                onClick:()=>ui.selectOS(item.id),
+                onEdit:()=>ui.editOS(item.id,item.name),
+                onDelete:()=>ui.deleteOS(item.id)
+            }), state.osSelected);
+
+            const items=getItems(data);
+            if(!state.osSelected && items.length>0){ ui.selectOS(items[0].id); }
+        },
+        selectOS:(id)=>{
+            state.osSelected=id;
+            setBtnDisabled('btnAddVersion',false);
+            ui.reloadOS(state.osPage);
+            ui.reloadVersions(1);
+        },
+        addOS: async()=>{
+            const name=prompt('OS name:'); if(!name||!state.platformSelected) return;
+            const created=await api.createOS(state.platformSelected,name.trim());
+            state.osSelected=created.id; setBtnDisabled('btnAddVersion',false);
+            await ui.reloadOS(1); await ui.reloadVersions(1);
+        },
+        editOS: async(id, oldName)=>{
+            const name=prompt('Edit OS name:',oldName); if(!name) return;
+            await api.updateOS(id,state.platformSelected,name.trim()); ui.reloadOS(state.osPage);
+        },
+        deleteOS: async(id)=>{
+            if(!confirm('Delete OS and its versions?')) return;
+            await api.deleteOS(id);
+            if(state.osSelected===id){
+                state.osSelected=null;
+                el('listVersions').innerHTML='<div class="empty">Choose an OS to see the versions</div>';
+                setBtnDisabled('btnAddVersion',true);
+            }
+            await ui.reloadOS(1);
+        },
+
+        // Versions
+        reloadVersions: async(page=1)=>{
+            if(!state.osSelected) return;
+            state.versionPage=page;
+            const q=el('qVersions').value.trim();
+            const data=await api.versions(state.osSelected,page,q);
+            ui.renderList('listVersions','pagerVersions','metaVersions',data,(item)=>({
+                id:item.id, name:item.name, subtitle:`ID: ${item.id}`,
+                onClick:()=>{},
+                onEdit:()=>ui.editVersion(item.id,item.name),
+                onDelete:()=>ui.deleteVersion(item.id)
+            }));
+        },
+        addVersion: async()=>{
+            const name=prompt('Version name:'); if(!name||!state.osSelected) return;
+            await api.createVersion(state.osSelected,name.trim()); await ui.reloadVersions(1);
+        },
+        editVersion: async(id, oldName)=>{
+            const name=prompt('Edit version name:',oldName); if(!name) return;
+            await api.updateVersion(id,name.trim()); ui.reloadVersions(state.versionPage);
+        },
+        deleteVersion: async(id)=>{
+            if(!confirm('Delete version?')) return;
+            await api.deleteVersion(id); ui.reloadVersions(state.versionPage);
+        },
+
+        // List renderer (без innerHTML-магии)
+        renderList:(listId,pagerId,metaId,data,mapFn,activeId=null)=>{
+            const list=el(listId), pager=el(pagerId), meta=el(metaId);
+            const items=getItems(data), page=getPage(data), total=getTotal(data), size=getSize(data);
+
+            if(!items || items.length===0){
+                list.innerHTML='<div class="empty">Nothing here yet</div>';
+                pager.innerHTML=''; meta.textContent=''; return;
+            }
+
+            meta.textContent=`page ${page} • total ${total}`;
+            list.innerHTML='';
+
+            items.forEach(raw=>{
+                const m=mapFn(raw);
+                const row=document.createElement('div'); row.className='item' + (activeId===m.id?' active':'');
+                // left block
+                const left=document.createElement('div');
+                const nm=document.createElement('div'); nm.className='name'; nm.textContent=m.name;
+                const sub=document.createElement('div'); sub.className='muted'; sub.textContent=m.subtitle||'';
+                left.appendChild(nm); left.appendChild(sub);
+                // actions
+                const act=document.createElement('div'); act.className='actions';
+                const bEdit=document.createElement('button'); bEdit.className='btn'; bEdit.textContent='Edit';
+                const bDel=document.createElement('button'); bDel.className='btn danger'; bDel.textContent='Delete';
+                bEdit.onclick=(e)=>{e.stopPropagation(); m.onEdit && m.onEdit();};
+                bDel.onclick=(e)=>{e.stopPropagation(); m.onDelete && m.onDelete();};
+                act.appendChild(bEdit); act.appendChild(bDel);
+
+                row.appendChild(left); row.appendChild(act);
+                row.onclick = m.onClick || null;
+                list.appendChild(row);
+            });
+
+            // pager
+            const pages=Math.ceil(total/size);
+            pager.innerHTML='';
+            const addBtn=(label,disabled,handler)=>{
+                const b=document.createElement('button'); b.textContent=label; b.disabled=disabled; b.onclick=handler; pager.appendChild(b);
+            };
+            addBtn('«', page<=1, ()=>{ if(listId==='listPlatforms') ui.reloadPlatforms(1);
+            else if(listId==='listOS') ui.reloadOS(1); else ui.reloadVersions(1); });
+            addBtn('‹', page<=1, ()=>{ const p=page-1;
+                if(listId==='listPlatforms') ui.reloadPlatforms(p);
+                else if(listId==='listOS') ui.reloadOS(p); else ui.reloadVersions(p); });
+            addBtn('›', page>=pages, ()=>{ const p=page+1;
+                if(listId==='listPlatforms') ui.reloadPlatforms(p);
+                else if(listId==='listOS') ui.reloadOS(p); else ui.reloadVersions(p); });
+            addBtn('»', page>=pages, ()=>{ const p=pages;
+                if(listId==='listPlatforms') ui.reloadPlatforms(p);
+                else if(listId==='listOS') ui.reloadOS(p); else ui.reloadVersions(p); });
+        }
+    };
+
+    // init
+    ui.reloadPlatforms(1);
+</script>
+</body>
+</html>

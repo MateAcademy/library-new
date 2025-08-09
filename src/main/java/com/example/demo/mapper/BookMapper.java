@@ -1,7 +1,7 @@
 package com.example.demo.mapper;
 
 import com.example.demo.dto.BookResponseDTO;
-import com.example.demo.models.Book;
+import com.example.demo.model.Book;
 
 import java.util.List;
 import java.util.stream.Collectors;

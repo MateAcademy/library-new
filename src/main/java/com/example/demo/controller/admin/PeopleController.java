@@ -4,7 +4,7 @@ import com.example.demo.dto.CreatePersonDTO;
 import com.example.demo.dto.PersonResponseDTO;
 import com.example.demo.errors.PersonNotFoundException;
 import com.example.demo.mapper.PersonMapper;
-import com.example.demo.models.Person;
+import com.example.demo.model.Person;
 import com.example.demo.service.PeopleService;
 import com.example.demo.utils.validators.CreatePersonDTOValidator;
 import com.example.demo.utils.validators.PersonValidator;
