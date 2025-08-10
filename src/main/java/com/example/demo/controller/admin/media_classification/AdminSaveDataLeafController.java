@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/admin/test-cases")
 @RequiredArgsConstructor
 public class AdminSaveDataLeafController {
+
     private final SaveDataLeafService saveDataLeafService;
 
     @PostMapping("/apply")
