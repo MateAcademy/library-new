@@ -39,17 +39,17 @@ public class SaveDataLeafService {
         leaf.getPlatformOperatingSystemSelections().clear();
         leaf.getVersionSelections().clear();
 
+
         // Добавляем новые платформы
         platformRepository.findAllById(request.platformIds())
-                .forEach(p -> leaf.getPlatformSelections().add(new SelectionPlatform(leaf, p)));
-
+                .forEach(platform -> leaf.getPlatformSelections().add(new SelectionPlatform(leaf, platform)));
         // POS
         posRepository.findAllById(request.posIds())
-                .forEach(pos -> leaf.getPlatformOperatingSystemSelections().add(new SelectionPlatformOperatingSystem(leaf, pos)));
+                .forEach(platformOperatingSystem -> leaf.getPlatformOperatingSystemSelections().add(new SelectionPlatformOperatingSystem(leaf, platformOperatingSystem)));
 
         // Версии
         versionRepository.findAllById(request.versionIds())
-                .forEach(ver -> leaf.getVersionSelections().add(new SelectionVersion(leaf, ver)));
+                .forEach(version -> leaf.getVersionSelections().add(new SelectionVersion(leaf, version)));
 
         saveDataLeafRepository.save(leaf);
     }
