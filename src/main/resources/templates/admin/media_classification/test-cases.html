@@ -28,6 +28,7 @@
         .btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:600}
         .btn.primary{background:var(--accent);color:#fff;border:0}
         .btn.ghost{background:#eef3f7}
+        .btn[disabled]{opacity:.5;cursor:not-allowed}
         .content{padding:8px 0}
 
         /* tree */
@@ -44,6 +45,7 @@
 
         .pill{background:#eef3f7;border:1px solid var(--line);border-radius:999px;padding:2px 8px;font-size:12px;color:#546372;margin-left:auto}
         .empty{padding:24px;text-align:center;color:var(--muted)}
+        .warn{padding:10px 12px;margin:10px 14px;border:1px solid #ffd18b;background:#fff7e6;border-radius:10px;color:#8a5a00}
     </style>
 </head>
 <body>
@@ -51,9 +53,9 @@
     <h1>Administration</h1>
 
     <!-- TABS -->
-    <div class="tabs">
+    <div class="tabs" id="tabs">
         <a class="tab" href="/admin/crud-platforms">CRUD</a>
-        <a class="tab active" href="/admin/test-cases">TestCases</a>
+        <a class="tab active" id="tab-testcases" href="/admin/test-cases">TestCases</a>
         <a class="tab" href="/admin/audit-criteria">AuditCriteria</a>
         <a class="tab" href="/admin/dictionaries">Dictionaries</a>
         <a class="tab" href="/admin/audit-area">Audit area</a>
@@ -66,9 +68,10 @@
                 <button class="btn ghost" onclick="ui.expandAll()">Expand all</button>
                 <button class="btn ghost" onclick="ui.collapseAll()">Collapse all</button>
                 <button class="btn" onclick="ui.clearAll()">Clear</button>
-                <button class="btn primary" onclick="ui.submitSelection()">Apply selection</button>
+                <button id="btnApply" class="btn primary" onclick="ui.submitSelection()">Apply selection</button>
             </div>
         </div>
+        <div id="warn" class="warn" style="display:none"></div>
         <div class="content">
             <div id="tree" class="tree"></div>
             <div id="meta" class="empty">Loading…</div>
@@ -82,6 +85,7 @@
         platforms: ()=>fetch(`/admin/platform?page=1&pageSize=1000&sortField=name&sortDirection=asc`).then(r=>r.json()),
         osByPlatform:(platformId)=>fetch(`/admin/platform-operating-system?platformId=${platformId}&page=1&pageSize=1000&sortField=id&sortDirection=asc`).then(r=>r.json()),
         versionsByPOS:(posId)=>fetch(`/admin/operating-system-version?platformOperatingSystemId=${posId}&page=1&pageSize=1000&sortField=id&sortDirection=asc`).then(r=>r.json()),
+        loadSelection:(docType,docId)=>fetch(`/admin/test-cases/selection?docType=${encodeURIComponent(docType)}&docId=${encodeURIComponent(docId)}`).then(r=>r.json()),
         applySelection:(payload)=>fetch(`/admin/test-cases/apply`,{
             method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)
         })
@@ -92,9 +96,9 @@
 
     // -------- STATE ----------
     const state = {
-        // данные
+        docType: null,
+        docId: null,
         platforms: [],        // [{id,name, os: [...] }]
-        // выбранные id
         selPlatforms: new Set(),
         selPOS: new Set(),
         selVersions: new Set()
@@ -105,8 +109,41 @@
     // -------- UI BUILD ----------
     const ui = {
         init: async ()=>{
+            // читаем параметры из URL
+            const params = new URLSearchParams(location.search);
+            state.docType = params.get('docType');
+            state.docId   = params.get('docId');
+
+            // обновим ссылку «TestCases» чтобы сохраняла текущие параметры
+            const tc = document.getElementById('tab-testcases');
+            if (state.docType && state.docId) {
+                tc.href = `/admin/test-cases?docType=${encodeURIComponent(state.docType)}&docId=${encodeURIComponent(state.docId)}`;
+            }
+
+            // если нет параметров — предупредим и заблокируем сохранение
+            if (!state.docType || !state.docId) {
+                el('warn').style.display = '';
+                el('warn').textContent = 'docType и docId не заданы. Добавьте их в адресную строку, например: ?docType=TEST_CASE&docId=42';
+                el('btnApply').disabled = true;
+            } else {
+                el('warn').style.display = 'none';
+                el('btnApply').disabled = false;
+
+                // 1. поднимем сохранённые ID
+                try{
+                    const saved = await api.loadSelection(state.docType, state.docId);
+                    state.selPlatforms = new Set(saved.platformIds || []);
+                    state.selPOS       = new Set(saved.posIds || []);
+                    state.selVersions  = new Set(saved.versionIds || []);
+                }catch(e){
+                    // если ничего не найдено — просто пустой выбор
+                    state.selPlatforms.clear(); state.selPOS.clear(); state.selVersions.clear();
+                }
+            }
+
+            // 2. загрузим платформы
             const data = await api.platforms();
-            state.platforms = getItems(data).map(p => ({...p, os:null})); // os лениво
+            state.platforms = getItems(data).map(p => ({...p, os:null}));
             ui.renderTree();
         },
 
@@ -118,10 +155,7 @@
                 meta.textContent = 'Nothing here yet'; return;
             }
             meta.textContent = '';
-            state.platforms.forEach(p => {
-                const node = ui.makePlatformNode(p);
-                tree.appendChild(node);
-            });
+            state.platforms.forEach(p => tree.appendChild(ui.makePlatformNode(p)));
         },
 
         // --- узел платформы
@@ -130,7 +164,6 @@
             const row = document.createElement('div'); row.className='row';
             const toggle = ui.makeToggle(()=>ui.togglePlatform(p.id, children), 'platform');
             const cb = ui.makeCheckbox('platform', p.id, checked=>{
-                // каскад вниз
                 if (p.os && Array.isArray(p.os)) {
                     p.os.forEach(os=>{
                         ui.setChecked('pos', os.id, checked);
@@ -141,7 +174,7 @@
             const label = document.createElement('span'); label.className='label'; label.textContent = p.name;
             const meta = document.createElement('span'); meta.className='pill'; meta.textContent='Platform';
             row.append(toggle, cb, label, meta);
-            const children = document.createElement('div'); children.className='children'; // сюда OS
+            const children = document.createElement('div'); children.className='children';
             node.append(row, children);
             return node;
         },
@@ -157,7 +190,7 @@
             const label = document.createElement('span'); label.className='label'; label.textContent = os.name;
             const meta = document.createElement('span'); meta.className='pill'; meta.textContent='OS';
             row.append(toggle, cb, label, meta);
-            const children = document.createElement('div'); children.className='children'; // сюда versions
+            const children = document.createElement('div'); children.className='children';
             node.append(row, children);
             return node;
         },
@@ -165,7 +198,7 @@
         // --- узел версии
         makeVersionRow: (v)=>{
             const row = document.createElement('div'); row.className='row';
-            const spacer = document.createElement('div'); spacer.style.width='24px'; // вместо toggler
+            const spacer = document.createElement('div'); spacer.style.width='24px';
             const cb = ui.makeCheckbox('ver', v.id, ()=>{}, state.selVersions.has(v.id));
             const label = document.createElement('span'); label.className='label'; label.textContent = v.name;
             const meta = document.createElement('span'); meta.className='pill'; meta.textContent='Version';
@@ -174,7 +207,7 @@
         },
 
         // --- элементы управления
-        makeToggle: (handler,type)=>{
+        makeToggle: (handler)=>{
             const t = document.createElement('button');
             t.className='toggle'; t.type='button'; t.setAttribute('aria-expanded','false');
             t.textContent='›';
@@ -191,7 +224,6 @@
             const cb = document.createElement('input'); cb.type='checkbox';
             cb.checked = preset;
             cb.onchange = ()=>{
-                // апдейт стейта
                 ui.setChecked(kind,id,cb.checked,true);
                 onChange && onChange(cb.checked);
             };
@@ -202,27 +234,22 @@
         setChecked:(kind,id,checked, fromSelf=false)=>{
             const set = kind==='platform'?state.selPlatforms : kind==='pos'? state.selPOS : state.selVersions;
             checked ? set.add(id) : set.delete(id);
-            // Обновить реальный чекбокс, если меняем каскадом
             if (!fromSelf){
                 const q = `input[type="checkbox"][data-kind="${kind}"][data-id="${id}"]`;
                 const box = document.querySelector(q);
                 if (box) box.checked = checked;
             }
-            // Поднять indeterminate / родительские статусы
             ui.refreshParentStates();
         },
 
         refreshParentStates: ()=>{
-            // для каждой платформы смотрим дочерние pos/ver
             document.querySelectorAll('.node>.row input[type="checkbox"][data-kind="platform"]').forEach(cbP=>{
                 const node = cbP.closest('.node');
                 const posBoxes = node.querySelectorAll('.children input[type="checkbox"][data-kind="pos"]');
                 if (posBoxes.length===0){ cbP.indeterminate=false; return; }
-                let checked = 0;
-                posBoxes.forEach(b=>{ if (b.checked) checked++; });
+                let checked = 0; posBoxes.forEach(b=>{ if (b.checked) checked++; });
                 cbP.indeterminate = checked>0 && checked<posBoxes.length;
             });
-            // для каждого pos — по версиям
             document.querySelectorAll('input[type="checkbox"][data-kind="pos"]').forEach(cbOs=>{
                 const parent = cbOs.closest('.node');
                 const vBoxes = parent.querySelectorAll('.children input[type="checkbox"][data-kind="ver"]');
@@ -235,12 +262,10 @@
         // --- раскрытие
         togglePlatform: async (platformId, container)=>{
             if (container.classList.contains('open')) { container.classList.remove('open'); return; }
-            // если не загружено — грузим OS
             const p = state.platforms.find(x=>x.id===platformId);
             if (!p.os){
                 const data = await api.osByPlatform(platformId);
                 p.os = getItems(data).map(o => ({...o, versions:null}));
-                // отрисовка
                 container.innerHTML='';
                 p.os.forEach(os=> container.appendChild(ui.makeOSNode(os)));
             }
@@ -249,7 +274,6 @@
 
         toggleOS: async (posId, container)=>{
             if (container.classList.contains('open')) { container.classList.remove('open'); return; }
-            // найти OS в state
             let targetOS = null;
             state.platforms.forEach(p=>{
                 if (p.os) {
@@ -270,7 +294,6 @@
 
         // --- общие действия
         expandAll: async ()=>{
-            // раскрыть все платформы
             const nodes = document.querySelectorAll('.node>.row .toggle');
             for (const t of nodes){ if (t.getAttribute('aria-expanded')==='false') t.click(); }
         },
@@ -286,8 +309,10 @@
 
         submitSelection: async ()=>{
             const payload = {
+                docType: state.docType,
+                docId: Number(state.docId),
                 platformIds: Array.from(state.selPlatforms),
-                platformOsIds: Array.from(state.selPOS),
+                posIds: Array.from(state.selPOS),
                 versionIds: Array.from(state.selVersions)
             };
             try{
