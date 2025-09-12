@@ -41,12 +41,12 @@ public class SaveDataLeaf {
     @Column(name = "doc_id", nullable = false)
     private Long docId;
 
-    @OneToMany(mappedBy = "saveDataLeaf", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "saveDataLeaf", cascade = CascadeType.ALL)
     private Set<SelectionPlatform> platformSelections = new HashSet<>();
 
-    @OneToMany(mappedBy = "saveDataLeaf", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "saveDataLeaf", cascade = CascadeType.ALL)
     private Set<SelectionPlatformOperatingSystem> platformOperatingSystemSelections = new HashSet<>();
 
-    @OneToMany(mappedBy = "saveDataLeaf", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "saveDataLeaf", cascade = CascadeType.ALL)
     private Set<SelectionVersion> versionSelections = new HashSet<>();
 }

@@ -4,7 +4,7 @@ import com.example.demo.model.media_classification.DocumentLeafType;
 
 import java.util.Set;
 
-public record SaveDataLeafResponse(
+public record SaveDataLeafDTO(
     DocumentLeafType docType,
     Long docId,
     Set<Long> platformIds,
