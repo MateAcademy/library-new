@@ -43,7 +43,7 @@ public class BookController {
                         Model model) {
         final Long libraryId = (Long) session.getAttribute("libraryId");
         if (libraryId == null) {
-            log.warn("libraryId not found in session BookController");
+            log.info("User redirected to library selection - no libraryId in session");
             return "redirect:/admin/choose-library";
         }
 

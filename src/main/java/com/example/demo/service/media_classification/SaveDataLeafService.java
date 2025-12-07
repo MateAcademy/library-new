@@ -6,6 +6,7 @@ import com.example.demo.repository.media_classification.*;
 import jakarta.persistence.EntityManager;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SaveDataLeafService {
@@ -61,6 +63,9 @@ public class SaveDataLeafService {
             .map(ids -> ids.stream()
                 .map(pid -> new SelectionVersion(leaf, entityManager.getReference(OperatingSystemVersion.class, pid)))
                 .toList()).ifPresent(selectionVersionRepository::saveAll);
+
+        log.info("Replaced selection for document type: {}, docId: {} - platforms: {}, pos: {}, versions: {}",
+                docType, docId, platformIds.size(), posIds.size(), versionIds.size());
 
         return new SaveDataLeafDTO(
             leaf.getDocType(),

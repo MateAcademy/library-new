@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +27,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -73,10 +75,12 @@ public class BookService {
                 .collect(Collectors.toList());
 
         bookCopyRepository.saveAll(copies);
+        log.info("Created book '{}' by {} with {} copies", book.getTitle(), book.getAuthor(), copyCount);
     }
 
     public void update(@NonNull Integer id, @NonNull Book updatedBook) {
         bookRepository.update(updatedBook);
+        log.info("Updated book with id: {}, title: '{}'", id, updatedBook.getTitle());
     }
 
     public void delete(@NonNull Long id) {
@@ -89,10 +93,12 @@ public class BookService {
                 .anyMatch(copy -> copy.getOwner() != null);
 
         if (anyAssigned) {
+            log.warn("Cannot delete book id: {}, title: '{}' - {} copies are checked out", id, book.getTitle(), allCopies.size());
             throw new BookNotDeletedException("Unable to delete book: there are checked out copies");
         }
 
         bookRepository.delete(id);
+        log.info("Deleted book with id: {}, title: '{}'", id, book.getTitle());
     }
 
     public Optional<Book> findByTitle(String title) {
@@ -107,7 +113,7 @@ public class BookService {
             bookRepository.save(book);
         }
         long end = System.currentTimeMillis();
-        System.out.println("⏱ Обычная вставка 1000 книг заняла: " + (end - start) + " мс");
+        log.info("Regular insert of 1000 books took: {} ms", (end - start));
     }
 
     public void batchInsert1000Books() {
@@ -116,7 +122,7 @@ public class BookService {
         long start = System.currentTimeMillis();
         bookRepository.butchSaveAll(books);
         long end = System.currentTimeMillis();
-        System.out.println("⏱ Batch вставка 1000 книг заняла: " + (end - start) + " мс");
+        log.info("Batch insert of 1000 books took: {} ms", (end - start));
     }
 
     private List<Book> get1000Books() {

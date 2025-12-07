@@ -39,6 +39,7 @@ public class LoginController {
             final Set<Library> personLibraries = person.getLibraries();
 
             if (personLibraries == null || personLibraries.isEmpty()) {
+                log.warn("Login attempt by user {} with no library access", email);
                 model.addAttribute("error", "У вас нет доступа ни к одной библиотеке.");
                 return "index";
             }
@@ -56,6 +57,7 @@ public class LoginController {
             log.info("Person with email {} LOG IN to site", email);
             return "admin/choose-library";
         } else {
+            log.warn("Failed login attempt for email: {}", email);
             model.addAttribute("error", "Неверный email или пароль");
             return "index";
         }

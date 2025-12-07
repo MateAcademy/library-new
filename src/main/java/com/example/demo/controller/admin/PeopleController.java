@@ -40,7 +40,7 @@ public class PeopleController {
                        Model model) {
         final Long libraryId = (Long) session.getAttribute("libraryId");
         if (libraryId == null) {
-            log.warn("libraryId not found in session PeopleController");
+            log.info("User redirected to library selection - no libraryId in session");
             return "redirect:/admin/choose-library";
         }
 
@@ -114,9 +114,8 @@ public class PeopleController {
         personValidator.validate(person, bindingResult);
 
         if (bindingResult.hasErrors()) {
-
-            System.out.println("Ошибки валидации:");
-            bindingResult.getAllErrors().forEach(System.out::println);
+            log.debug("Validation errors for person id: {}", person.getId());
+            bindingResult.getAllErrors().forEach(error -> log.debug("Validation error: {}", error));
 
             long libraryId = (long) session.getAttribute("libraryId");
             return this.getLibraryView(libraryId, "edit-person");

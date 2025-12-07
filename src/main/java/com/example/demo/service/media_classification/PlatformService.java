@@ -6,6 +6,7 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.media_classification.Platform;
 import com.example.demo.repository.media_classification.PlatformRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PlatformService {
@@ -48,7 +50,9 @@ public class PlatformService {
     @Transactional
     public Platform create(@NotNull Platform platform) {
         this.checkForUniqueNameOnCreate(StringUtils.trim(platform.getName()));
-        return platformRepository.save(platform);
+        Platform savedPlatform = platformRepository.save(platform);
+        log.info("Created platform: '{}' with id: {}", savedPlatform.getName(), savedPlatform.getId());
+        return savedPlatform;
     }
 
     @NotNull
@@ -59,7 +63,9 @@ public class PlatformService {
         final Platform updatedPlatform = this.getById(platform.getId());
         updatedPlatform.setName(StringUtils.trim(platform.getName()));
 
-        return platformRepository.save(updatedPlatform);
+        Platform savedPlatform = platformRepository.save(updatedPlatform);
+        log.info("Updated platform id: {} to name: '{}'", savedPlatform.getId(), savedPlatform.getName());
+        return savedPlatform;
     }
 
     private void checkForUniqueNameOnCreate(@NotNull String name) {

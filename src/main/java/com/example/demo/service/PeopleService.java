@@ -35,8 +35,16 @@ public class PeopleService {
     final PersonRepository personRepository;
 
     public Optional<PersonResponseDTO> login(String email, String password) {
-        return personRepository.findByEmailAndPassword(email, password)
+        Optional<PersonResponseDTO> result = personRepository.findByEmailAndPassword(email, password)
                 .map(PersonMapper::mapToPersonResponseDTO);
+
+        if (result.isPresent()) {
+            log.info("Successful login attempt for email: {}", email);
+        } else {
+            log.warn("Failed login attempt for email: {}", email);
+        }
+
+        return result;
     }
 
     public String getNextPersonMediaId() {
@@ -69,12 +77,13 @@ public class PeopleService {
         person.setMediaId(nextPersonMediaId);
 
         personRepository.save(person);
-        //     System.out.println("PeopleService.class save person to DB personId = " + person.getPersonId());
+        log.info("Created new person: {} (email: {}, mediaId: {})", person.getName(), person.getEmail(), nextPersonMediaId);
     }
 
     public void update(@NonNull Person updatedPerson, HttpSession session) {
         this.setCurrentLibrary(updatedPerson, session);
         personRepository.update(updatedPerson);
+        log.info("Updated person id: {} (email: {})", updatedPerson.getId(), updatedPerson.getEmail());
     }
 
     public boolean delete(@NonNull Long personId, @NonNull HttpSession session) {
@@ -86,9 +95,11 @@ public class PeopleService {
         this.deletePersonFromLibrary(person, libraryId, personEmail);
 
         if (Objects.equals(email, personEmail)) {
+            log.info("Person deleted themselves: {} (email: {})", person.getName(), personEmail);
             session.invalidate();
             return true;
         }
+        log.info("Deleted person id: {} from library id: {} (email: {})", personId, libraryId, personEmail);
         return false;
     }
 
@@ -96,6 +107,7 @@ public class PeopleService {
     protected void deletePersonFromLibrary(@NonNull Person person, @NonNull Long libraryId, @NonNull String personEmail) {
 //todo: проверить когда будут книги смогу ли удалить человека
         if (!person.getBookCopy().isEmpty()) {
+            log.warn("Cannot delete person id: {} (email: {}) - has {} checked out books", person.getId(), personEmail, person.getBookCopy().size());
             throw new PersonNotDeletedException(person.getId());
         }
 
@@ -119,7 +131,7 @@ public class PeopleService {
         }
 
         long end = System.currentTimeMillis();
-        System.out.println("⏱ Обычная вставка 1000 записей заняла: " + (end - start) + " мс");
+        log.info("Regular insert of 1000 people took: {} ms", (end - start));
     }
 
     public void butchInsert1000People(HttpSession session) {
@@ -127,7 +139,7 @@ public class PeopleService {
         long start = System.currentTimeMillis();
         personRepository.butchSaveAll(people);
         long end = System.currentTimeMillis();
-        System.out.println("⏱ Batch вставка 1000 записей заняла: " + (end - start) + " мс");
+        log.info("Batch insert of 1000 people took: {} ms", (end - start));
     }
 
     private void setCurrentLibrary(Person person, HttpSession session) {
