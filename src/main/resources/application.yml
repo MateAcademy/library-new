@@ -42,14 +42,6 @@ logging:
     com.example.demo: DEBUG
     org.springframework: WARN
 
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %level - %logger{36} - %msg%n"
-  file:
-    name: logs/app.log
-  charset:
-    console: UTF-8
-    file: UTF-8
-
 management:
   endpoints:
     web:
