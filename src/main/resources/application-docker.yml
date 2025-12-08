@@ -1,0 +1,9 @@
+# Конфигурация для Docker профиля
+# Переопределяет database.properties для использования в Docker контейнере
+
+spring:
+  config:
+    import:
+      - classpath:properties/database-docker.properties
+      - classpath:properties/application.properties
+      - classpath:properties/logging.properties

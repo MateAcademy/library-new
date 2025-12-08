@@ -1,0 +1,17 @@
+2025-08-11 07:41:15.226 INFO  [restartedMain] com.example.demo.LibraryApplication - Starting LibraryApplication using Java 21.0.7 with PID 59328 (/Users/serhiiklunnyi/IdeaProjects/library/target/classes started by serhiiklunnyi in /Users/serhiiklunnyi/IdeaProjects/library)
+2025-08-11 07:41:15.228 DEBUG [restartedMain] com.example.demo.LibraryApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-08-11 07:41:15.228 INFO  [restartedMain] com.example.demo.LibraryApplication - The following 1 profile is active: "jpa"
+2025-08-11 07:41:18.169 INFO  [restartedMain] com.example.demo.LibraryApplication - Started LibraryApplication in 3.18 seconds (process running for 3.479)
+2025-08-11 07:41:24.691 INFO  [http-nio-8086-exec-5] c.e.demo.controller.LoginController - Person with email anna@example.com LOG IN to site
+2025-08-11 07:43:22.060 INFO  [http-nio-8086-exec-4] c.e.demo.controller.LoginController - Person with email anna@example.com LOG IN to site
+2025-08-11 08:01:19.821 INFO  [restartedMain] com.example.demo.LibraryApplication - Starting LibraryApplication using Java 21.0.7 with PID 59873 (/Users/serhiiklunnyi/IdeaProjects/library/target/classes started by serhiiklunnyi in /Users/serhiiklunnyi/IdeaProjects/library)
+2025-08-11 08:01:19.821 DEBUG [restartedMain] com.example.demo.LibraryApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-08-11 08:01:19.822 INFO  [restartedMain] com.example.demo.LibraryApplication - The following 1 profile is active: "jpa"
+2025-08-11 08:01:22.503 INFO  [restartedMain] com.example.demo.LibraryApplication - Started LibraryApplication in 2.873 seconds (process running for 3.134)
+2025-08-11 08:04:15.734 INFO  [http-nio-8086-exec-5] c.e.demo.controller.LoginController - Person with email anna@example.com LOG IN to site
+2025-08-11 08:50:05.226 INFO  [restartedMain] com.example.demo.LibraryApplication - Starting LibraryApplication using Java 21.0.7 with PID 60942 (/Users/serhiiklunnyi/IdeaProjects/library/target/classes started by serhiiklunnyi in /Users/serhiiklunnyi/IdeaProjects/library)
+2025-08-11 08:50:05.227 DEBUG [restartedMain] com.example.demo.LibraryApplication - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-08-11 08:50:05.227 INFO  [restartedMain] com.example.demo.LibraryApplication - The following 1 profile is active: "jpa"
+2025-08-11 08:50:07.852 INFO  [restartedMain] com.example.demo.LibraryApplication - Started LibraryApplication in 2.819 seconds (process running for 3.085)
+2025-08-11 08:50:17.120 INFO  [http-nio-8086-exec-4] c.e.demo.controller.LoginController - Person with email anna@example.com LOG IN to site
+2025-08-11 10:28:10.736 INFO  [http-nio-8086-exec-6] c.e.demo.controller.LoginController - Person with email anna@example.com LOG IN to site
