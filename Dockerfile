@@ -1,19 +1,16 @@
 # Multi-stage build для оптимизации размера образа
 
-# Стадия 1: Сборка приложения
+# Стадия 1: Сборка проекта мавеном
 FROM maven:3.9-eclipse-temurin-21 AS build
-
 WORKDIR /app
-
 # Копируем pom.xml и загружаем зависимости (кэшируется)
 COPY pom.xml .
 RUN mvn dependency:go-offline -B
-
 # Копируем исходный код и собираем приложение
 COPY src ./src
 RUN mvn clean package -DskipTests -B
 
-# Стадия 2: Запуск приложения
+# Стадия 2: Копирование артефактов и запуск приложения на порту 8080
 FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
