@@ -65,7 +65,7 @@ public class Person {
     @ManyToMany
     @JoinTable(
         name = "person_library",
-        joinColumns = @JoinColumn(name = "id"),
+        joinColumns = @JoinColumn(name = "person_id"),
         inverseJoinColumns = @JoinColumn(name = "library_id")
     )
     Set<Library> libraries;

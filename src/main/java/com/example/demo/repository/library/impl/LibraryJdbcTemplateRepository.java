@@ -24,7 +24,7 @@ public class LibraryJdbcTemplateRepository implements LibraryRepository {
 
     private final RowMapper<Library> libraryRowMapper = (rs, rowNum) -> {
         Library lib = new Library();
-        lib.setLibraryId(rs.getLong("library_id"));
+        lib.setId(rs.getLong("library_id"));
         lib.setName(rs.getString("name"));
         lib.setAddress(rs.getString("address"));
         return lib;

@@ -111,7 +111,7 @@ public class PeopleService {
             throw new PersonNotDeletedException(person.getId());
         }
 
-        person.getLibraries().removeIf(lib -> lib.getLibraryId().equals(libraryId));
+        person.getLibraries().removeIf(lib -> lib.getId().equals(libraryId));
 
         if (person.getLibraries().isEmpty() && person.getBookCopy().isEmpty()) {
             personRepository.delete(person.getId());
@@ -149,7 +149,7 @@ public class PeopleService {
 //                    .orElseThrow(() -> new IllegalArgumentException("Library not found with id: " + libraryId));
 //
             Library library = new Library();
-            library.setLibraryId(libraryId);
+            library.setId(libraryId);
             Set<Library> libraries = new HashSet<>();
             libraries.add(library);
             person.setLibraries(libraries);

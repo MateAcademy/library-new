@@ -31,6 +31,8 @@ public class LoginController {
 
     @PostMapping("login")
     public String login(@RequestParam("email") String email, @RequestParam("password") String password,  Model model, HttpSession session) {
+        log.info("Login attempt - Email: '{}' (length: {}), Password: '{}' (length: {})",
+                 email, email.length(), password, password.length());
         Optional<Person> userOpt = personRepository.findByEmailAndPassword(email, password);
 
         if (userOpt.isPresent()) {
@@ -48,7 +50,7 @@ public class LoginController {
             session.setAttribute("email", email);
             session.setAttribute("personLibraryIds", person.getLibraries()
                 .stream()
-                .map(Library::getLibraryId)
+                .map(Library::getId)
                 .collect(Collectors.toSet()));
 
             final List<Library> libraries = libraryRepository.findAll();

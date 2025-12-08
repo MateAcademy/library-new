@@ -211,9 +211,9 @@
         <div class="library-grid">
             <div class="library-button"
                  th:each="lib : ${libraries}"
-                 th:data-id="${lib.libraryId}"
-                 th:style="'background-image: url(/images/library-' + ${lib.libraryId} + '.jpg);'"
-                 th:classappend="${errorLibraryId} == lib.libraryId ? ' error-visible' : ''"
+                 th:data-id="${lib.id}"
+                 th:style="'background-image: url(/images/library-' + ${lib.id} + '.jpg);'"
+                 th:classappend="${errorLibraryId} == lib.id ? ' error-visible' : ''"
                  onclick="selectLibrary(this)">
                 <span th:text="${lib.name}"></span>
             </div>

@@ -25,7 +25,7 @@ public class BookCopyJpaRepositoryImpl implements BookCopyRepository {
 
     @Override
     public Integer countByBookIdInLibrary(Long bookId, Long libraryId) {
-        return jpaRepository.countByBook_BookIdAndLibrary_LibraryId(bookId, libraryId);
+        return jpaRepository.countByBook_BookIdAndLibrary_Id(bookId, libraryId);
     }
 
     @Override

@@ -1,9 +1,12 @@
 server:
-  port: ${PORT:8080}
+  port: ${PORT:8086}
 
 spring:
   config:
-    import: classpath:database.properties
+    import:
+      - classpath:properties/database.properties
+      - classpath:properties/application.properties
+      - classpath:properties/logging.properties
   application:
     name: ${PROJECT_NAME:library-app}
   profiles:
