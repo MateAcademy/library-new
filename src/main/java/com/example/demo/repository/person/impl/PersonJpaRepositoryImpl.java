@@ -49,7 +49,7 @@ public class PersonJpaRepositoryImpl implements PersonRepository {
 
     @Override
     public Page<Person> findByLibraryId(Long libraryId, Pageable pageable) {
-        return jpaRepository.findByLibraryIdWithBooksAndLibraries(libraryId, pageable);
+        return jpaRepository.findByLibraryId(libraryId, pageable);
     }
 
     @Override

@@ -68,9 +68,11 @@ public class Person {
         joinColumns = @JoinColumn(name = "person_id"),
         inverseJoinColumns = @JoinColumn(name = "library_id")
     )
+    @BatchSize(size = 25)
     Set<Library> libraries;
 
     @OneToMany(mappedBy = "owner")
+    @BatchSize(size = 25)
     List<BookCopy> bookCopy;
 
     public Person(String mediaId, String name, Integer age, String email, String password, String address) {
