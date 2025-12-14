@@ -12,14 +12,14 @@ spring:
   profiles:
     active: ${PROFILES_DB:dev}
   jpa:
-    show-sql: true
+    show-sql: ${SHOW_SQL:false}
     open-in-view: false
     hibernate:
       ddl-auto: ${DDL_AUTO:update}
     defer-datasource-initialization: true
     properties:
-      generate_statistics: true
       hibernate:
+        generate_statistics: false
         jdbc:
           batch_size: 100
         order_inserts: true
@@ -38,12 +38,11 @@ springdoc:
 
 logging:
   level:
-#    org.springframework: DEBUG TRACE
+    root: INFO   #ERROR   #OFF
+    com.example.demo: DEBUG
+#    org.springframework: WARN DEBUG TRACE
 #    org.springframework.security.web: DEBUG
 #    org.springframework.security.authentication: DEBUG
-    root: INFO #ERROR   #OFF
-    com.example.demo: DEBUG
-    org.springframework: WARN
 
 management:
   endpoints:

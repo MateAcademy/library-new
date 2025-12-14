@@ -25,20 +25,20 @@ services:
       timeout: 5s
       retries: 5
 
-  library-app:
-    build: .
-    container_name: spring-boot-app
-    restart: always
-    ports:
-      - "127.0.0.1:8080:8080"
-    environment:
-      # Активируем профили: docker (для database-docker.properties) и jpa (для репозиториев)
-      SPRING_PROFILES_ACTIVE: docker,jpa
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks:
-      - app-network
+#  library-app:
+#    build: .
+#    container_name: spring-boot-app
+#    restart: always
+#    ports:
+#      - "127.0.0.1:8080:8080"
+#    environment:
+#      # Активируем профили: docker (для database-docker.properties) и jpa (для репозиториев)
+#      SPRING_PROFILES_ACTIVE: docker,jpa
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#    networks:
+#      - app-network
 
   pgadmin:
     image: dpage/pgadmin4

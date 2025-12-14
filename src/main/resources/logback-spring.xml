@@ -37,5 +37,11 @@
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="ASYNC_FILE"/>
     </root>
+    <logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" level="WARN"/>
+
+    <logger name="org.apache.catalina" level="INFO" additivity="false">
+        <appender-ref ref="TOMCAT_FILE"/>
+    </logger>
+
 </configuration>
 
