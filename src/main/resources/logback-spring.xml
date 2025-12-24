@@ -20,7 +20,7 @@
             <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} %method %line - %msg%n</pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
@@ -66,15 +66,15 @@
     <logger name="org.hibernate.engine.internal.StatisticalLoggingSessionEventListener" level="WARN"/>
 
     <!-- Tomcat/Catalina logs to separate file -->
-    <logger name="org.apache.catalina" level="INFO" additivity="false">
+    <logger name="org.apache.catalina" level="ERROR" additivity="false">
         <appender-ref ref="ASYNC_TOможет MCAT_FILE"/>
     </logger>
 
-    <logger name="org.apache.coyote" level="INFO" additivity="false">
+    <logger name="org.apache.coyote" level="ERROR" additivity="false">
         <appender-ref ref="ASYNC_TOMCAT_FILE"/>
     </logger>
 
-    <logger name="org.apache.tomcat" level="INFO" additivity="false">
+    <logger name="org.apache.tomcat" level="ERROR" additivity="false">
         <appender-ref ref="ASYNC_TOMCAT_FILE"/>
     </logger>
 
