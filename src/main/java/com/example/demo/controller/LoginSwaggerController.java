@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("api")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Tag(name = "LoginSwaggerController", description = "API for login")
@@ -24,7 +24,7 @@ public class LoginSwaggerController {
 
     final PeopleService peopleService;
 
-    @PostMapping("/login")
+    @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody PersonRequestDTO request) {
         return peopleService.login(request.getEmail(), request.getPassword())
                 .map(dto -> ResponseEntity.ok(Map.of("status", "OK", "person", dto)))

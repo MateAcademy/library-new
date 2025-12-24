@@ -65,7 +65,7 @@ public class LoginController {
         }
     }
 
-    @GetMapping("/admin/choose-library")
+    @GetMapping("admin/choose-library")
     public String returnToChooseLibrary(Model model) {
         List<Library> libraries = libraryRepository.findAll();
         model.addAttribute("libraries", libraries);
@@ -84,7 +84,7 @@ public class LoginController {
         return "library-%s/main-admin-page".formatted(libraryId);
     }
 
-    @GetMapping("/logout")
+    @GetMapping("logout")
     public String logout(HttpSession session) {
         final String email = (String) session.getAttribute("email");
 

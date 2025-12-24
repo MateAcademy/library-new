@@ -67,7 +67,7 @@
 
     <!-- Tomcat/Catalina logs to separate file -->
     <logger name="org.apache.catalina" level="INFO" additivity="false">
-        <appender-ref ref="ASYNC_TOMCAT_FILE"/>
+        <appender-ref ref="ASYNC_TOможет MCAT_FILE"/>
     </logger>
 
     <logger name="org.apache.coyote" level="INFO" additivity="false">
