@@ -1,6 +1,8 @@
 name: library
+# What version of the docker-compose file syntax do we use?
 version: '3.8'
 
+# Lists which volumes will be used to run our docker containers.
 volumes:
   postgres_data:
 
@@ -40,7 +42,7 @@ services:
 #    networks:
 #      - app-network
 
-  pgadmin:
+  pgAdmin:
     image: dpage/pgadmin4
     container_name: pgadmin
     restart: always
