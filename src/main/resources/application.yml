@@ -4,9 +4,9 @@ server:
 spring:
   config:
     import:
-      - classpath:properties/database.properties
-      - classpath:properties/application.properties
-      - classpath:properties/logging.properties
+      - classpath:properties/database.yml
+      - classpath:properties/application.yml
+      - classpath:properties/logging.yml
   application:
     name: ${PROJECT_NAME:library-app}
   profiles:

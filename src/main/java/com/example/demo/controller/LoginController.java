@@ -29,41 +29,41 @@ public class LoginController {
     final PersonRepository personRepository;
     final LibraryRepository libraryRepository;
 
-    @PostMapping("login")
-    public String login(@RequestParam("email") String email, @RequestParam("password") String password,  Model model, HttpSession session) {
-        log.info("Login attempt - Email: '{}' (length: {}), Password: '{}' (length: {})",
-                 email, email.length(), password, password.length());
-        Optional<Person> userOpt = personRepository.findByEmailAndPassword(email, password);
-
-        if (userOpt.isPresent()) {
-            Person person = userOpt.get();
-
-            final Set<Library> personLibraries = person.getLibraries();
-
-            if (personLibraries == null || personLibraries.isEmpty()) {
-                log.warn("Login attempt by user {} with no library access", email);
-                model.addAttribute("error", "У вас нет доступа ни к одной библиотеке.");
-                return "index";
-            }
-
-            session.setAttribute("person", person);
-            session.setAttribute("email", email);
-            session.setAttribute("personLibraryIds", person.getLibraries()
-                .stream()
-                .map(Library::getId)
-                .collect(Collectors.toSet()));
-
-            final List<Library> libraries = libraryRepository.findAll();
-            model.addAttribute("libraries", libraries);
-
-            log.info("Person with email {} LOG IN to site", email);
-            return "admin/choose-library";
-        } else {
-            log.warn("Failed login attempt for email: {}", email);
-            model.addAttribute("error", "Неверный email или пароль");
-            return "index";
-        }
-    }
+//    @PostMapping("login")
+//    public String login(@RequestParam("email") String email, @RequestParam("password") String password,  Model model, HttpSession session) {
+//        log.info("Login attempt - Email: '{}' (length: {}), Password: '{}' (length: {})",
+//                 email, email.length(), password, password.length());
+//        Optional<Person> userOpt = personRepository.findByEmailAndPassword(email, password);
+//
+//        if (userOpt.isPresent()) {
+//            Person person = userOpt.get();
+//
+//            final Set<Library> personLibraries = person.getLibraries();
+//
+//            if (personLibraries == null || personLibraries.isEmpty()) {
+//                log.warn("Login attempt by user {} with no library access", email);
+//                model.addAttribute("error", "У вас нет доступа ни к одной библиотеке.");
+//                return "index";
+//            }
+//
+//            session.setAttribute("person", person);
+//            session.setAttribute("email", email);
+//            session.setAttribute("personLibraryIds", person.getLibraries()
+//                .stream()
+//                .map(Library::getId)
+//                .collect(Collectors.toSet()));
+//
+//            final List<Library> libraries = libraryRepository.findAll();
+//            model.addAttribute("libraries", libraries);
+//
+//            log.info("Person with email {} LOG IN to site", email);
+//            return "admin/choose-library";
+//        } else {
+//            log.warn("Failed login attempt for email: {}", email);
+//            model.addAttribute("error", "Неверный email или пароль");
+//            return "index";
+//        }
+//    }
 
     @GetMapping("admin/choose-library")
     public String returnToChooseLibrary(Model model) {

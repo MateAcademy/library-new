@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <title>Вход</title>
     <style>
         * {
@@ -66,6 +67,33 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
+        }
+
+        .test-nav {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .test-nav a {
+            background: rgba(255, 255, 255, 0.92);
+            color: #00917E;
+            padding: 6px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+            transition: 0.2s;
+        }
+
+        .test-nav a:hover {
+            background: #00917E;
+            color: white;
         }
 
         .login-box {
@@ -170,9 +198,14 @@
 
 <!-- Правая панель с формой -->
 <div class="right-panel">
+    <div class="test-nav">
+        <a href="/authenticated">Private Page</a>
+        <a href="/public">Public Page</a>
+    </div>
+
     <div class="login-box">
         <h1>Вход в систему</h1>
-        <form action="/login" method="post">
+        <form th:action="@{/login}" method="post">
             <div class="form-group">
                 <label for="email">Электронная почта</label>
                 <input type="email" id="email" name="email" required>
