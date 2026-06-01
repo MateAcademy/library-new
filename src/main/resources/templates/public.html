@@ -3,11 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <title>Public</title>
+    <title>Welcome — Library</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f0eb;
+            color: #333;
+        }
+
+        header {
+            background-color: #00917E;
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        header h1 {
+            font-family: 'Georgia', serif;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.6);
+            padding: 8px 18px;
+            border-radius: 20px;
+            transition: background 0.2s;
+        }
+
+        header a:hover { background: rgba(255,255,255,0.15); }
+
+        .hero {
+            background-image: url('/fon/pexels-nitin.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 90px 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            color: white;
+        }
+
+        .hero-content h2 {
+            font-family: 'Georgia', serif;
+            font-size: 42px;
+            margin-bottom: 14px;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            opacity: 0.9;
+            max-width: 560px;
+            margin: 0 auto 28px;
+        }
+
+        .hero-content a {
+            background: #00917E;
+            color: white;
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .hero-content a:hover { background: #007a6a; }
+
+        .cards {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 50px 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 30px 24px;
+            flex: 1 1 260px;
+            max-width: 300px;
+            text-align: center;
+        }
+
+        .card-icon { font-size: 36px; margin-bottom: 14px; }
+
+        .card h3 {
+            font-size: 18px;
+            color: #00917E;
+            margin-bottom: 10px;
+        }
+
+        .card p { font-size: 14px; color: #666; line-height: 1.6; }
+
+        .hours {
+            background: white;
+            max-width: 600px;
+            margin: 0 auto 50px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .hours h3 {
+            background: #00917E;
+            color: white;
+            padding: 14px 24px;
+            font-size: 17px;
+        }
+
+        .hours table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .hours td {
+            padding: 11px 24px;
+            font-size: 14px;
+            border-bottom: 1px solid #f0ebe5;
+        }
+
+        .hours td:last-child { text-align: right; color: #00917E; font-weight: bold; }
+
+        footer {
+            background: #2c2c2c;
+            color: #aaa;
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+        }
+    </style>
 </head>
 <body>
 
-    <h1>Available to everyone.</h1>
+<header>
+    <h1>📚 City Library</h1>
+    <a href="/">Sign In</a>
+</header>
+
+<div class="hero">
+    <div class="hero-content">
+        <h2>Welcome to Our Library</h2>
+        <p>Discover thousands of books, journals, and digital resources available to our community.</p>
+        <a href="/">Sign In to Your Account</a>
+    </div>
+</div>
+
+<div class="cards">
+    <div class="card">
+        <div class="card-icon">📖</div>
+        <h3>Large Collection</h3>
+        <p>Access over 50,000 titles across fiction, science, history, technology, and more.</p>
+    </div>
+    <div class="card">
+        <div class="card-icon">🔍</div>
+        <h3>Search &amp; Reserve</h3>
+        <p>Find any book by title, author, or genre and reserve it online before your visit.</p>
+    </div>
+    <div class="card">
+        <div class="card-icon">🏛️</div>
+        <h3>Three Branches</h3>
+        <p>Visit us at Holosiivskyi district, Troieshchyna, or Brovary — all at your service.</p>
+    </div>
+</div>
+
+<div class="hours" style="padding: 0 40px; max-width: 1000px; margin: 0 auto 50px;">
+    <div class="hours" style="margin: 0;">
+        <h3>🕐 Opening Hours</h3>
+        <table>
+            <tr><td>Monday – Friday</td><td>09:00 – 20:00</td></tr>
+            <tr><td>Saturday</td><td>10:00 – 18:00</td></tr>
+            <tr><td>Sunday</td><td>11:00 – 16:00</td></tr>
+        </table>
+    </div>
+</div>
+
+<footer>
+    &copy; 2026 City Library. All rights reserved.
+</footer>
 
 </body>
 </html>

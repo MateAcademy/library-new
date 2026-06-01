@@ -1,13 +1,219 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <title>Authenticated page</title>
+    <title>Member Area — Library</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f0eb;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: #00917E;
+            color: white;
+            padding: 18px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        header h1 {
+            font-family: 'Georgia', serif;
+            font-size: 26px;
+            letter-spacing: 1px;
+        }
+
+        .header-links { display: flex; gap: 12px; }
+
+        .header-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            border: 1px solid rgba(255,255,255,0.6);
+            padding: 7px 16px;
+            border-radius: 20px;
+            transition: background 0.2s;
+        }
+
+        .header-links a:hover { background: rgba(255,255,255,0.15); }
+
+        .banner {
+            background: linear-gradient(135deg, #00917E 0%, #006d5e 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .banner .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 20px;
+            padding: 5px 16px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+
+        .banner h2 {
+            font-family: 'Georgia', serif;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .banner p { font-size: 15px; opacity: 0.85; }
+
+        .content {
+            flex: 1;
+            max-width: 960px;
+            margin: 40px auto;
+            padding: 0 24px;
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+            margin-bottom: 16px;
+        }
+
+        .cards {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 36px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+            padding: 24px;
+            flex: 1 1 200px;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .card-icon { font-size: 32px; margin-bottom: 12px; }
+
+        .card h3 { font-size: 15px; color: #00917E; margin-bottom: 6px; }
+
+        .card p { font-size: 13px; color: #777; line-height: 1.5; }
+
+        .info-box {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+            padding: 24px 28px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+
+        .info-box .icon { font-size: 28px; flex-shrink: 0; }
+
+        .info-box h3 { font-size: 15px; color: #333; margin-bottom: 4px; }
+
+        .info-box p { font-size: 13px; color: #777; }
+
+        .btn-primary {
+            display: inline-block;
+            background: #00917E;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover { background: #007a6a; }
+
+        footer {
+            background: #2c2c2c;
+            color: #aaa;
+            text-align: center;
+            padding: 18px;
+            font-size: 13px;
+        }
+    </style>
 </head>
 <body>
 
-  <h1>This page is for authorized users only.</h1>
+<header>
+    <h1>📚 City Library</h1>
+    <div class="header-links">
+        <a href="/admin/choose-library">Library Dashboard</a>
+        <a href="/logout">Log Out</a>
+    </div>
+</header>
+
+<div class="banner">
+    <div class="badge">🔐 Members Only</div>
+    <h2>Welcome to the Member Area</h2>
+    <p>You are signed in. Access your library account and manage resources below.</p>
+</div>
+
+<div class="content">
+
+    <p class="section-title">Quick Access</p>
+    <div class="cards">
+        <div class="card">
+            <div class="card-icon">🏛️</div>
+            <h3>Choose Library</h3>
+            <p>Select a branch and manage books and members.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">📚</div>
+            <h3>Books</h3>
+            <p>Browse, search, and manage the book catalogue.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">👥</div>
+            <h3>Members</h3>
+            <p>View and manage registered library members.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🔍</div>
+            <h3>Search</h3>
+            <p>Find books by title, author, or library branch.</p>
+        </div>
+    </div>
+
+    <p class="section-title">Account</p>
+    <div class="info-box">
+        <div class="icon">✅</div>
+        <div>
+            <h3>You are authenticated</h3>
+            <p>Your session is active. You have full access to the library management system.</p>
+        </div>
+    </div>
+
+    <a href="/admin/choose-library" class="btn-primary">Go to Library Dashboard →</a>
+
+</div>
+
+<footer>
+    &copy; 2026 City Library. All rights reserved.
+</footer>
 
 </body>
 </html>
