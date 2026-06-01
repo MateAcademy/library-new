@@ -7,6 +7,7 @@ spring:
       - classpath:properties/database.yml
       - classpath:properties/application.yml
       - classpath:properties/logging.yml
+      - optional:classpath:properties/database-local.yml
   application:
     name: ${PROJECT_NAME:library-app}
   profiles:

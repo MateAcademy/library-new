@@ -1,2 +1,8 @@
 # Project exclude paths
 /target/
+
+# Logs
+/logs/
+
+# Local credentials (do not commit)
+src/main/resources/properties/database-local.yml
