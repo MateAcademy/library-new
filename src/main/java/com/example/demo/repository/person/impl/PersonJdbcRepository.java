@@ -41,7 +41,7 @@ public class PersonJdbcRepository implements PersonRepository {
         String sql = "SELECT * FROM person";
 
         try (Connection connection = postgresConnector.connect();
-             Statement statement = connection.createStatement();  // Это тот обьект который содержит в себе запрос к БД
+             Statement statement = connection.createStatement();  // This object contains the query to the database
              ResultSet resultSet = statement.executeQuery(sql)) {
 
             while (resultSet.next()) {
@@ -109,7 +109,7 @@ public class PersonJdbcRepository implements PersonRepository {
             ps.setString(3, person.getEmail());
             ps.setString(4, person.getAddress());
 
-            // никакие данные не возвращает с БД
+            // does not return any data from the database
             ps.executeUpdate();
 
             ResultSet generatedKeys = ps.getGeneratedKeys();
@@ -157,7 +157,7 @@ public class PersonJdbcRepository implements PersonRepository {
 
     @Override
     public void butchSaveAll(List<Person> people) {
-        // todo: метод здесь не работает
+        // todo: method does not work here
     }
 
     @Override

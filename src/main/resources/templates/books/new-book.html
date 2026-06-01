@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <title>Добавить новую книгу</title>
+  <title>Add New Book</title>
   <style>
     body {
       background-image: url('/fon/pexels-minan1398.jpg');
@@ -100,7 +100,7 @@
     </div>
 
     <div class="form-group">
-      <label for="author">Автор</label>
+      <label for="author">Author</label>
       <input type="text" id="author" th:field="*{author}" required>
       <div style="color: red" th:if="${#fields.hasErrors('author')}" th:errors="*{author}">Author error</div>
     </div>
@@ -112,15 +112,15 @@
     </div>
 
     <div class="form-group">
-      <label for="copyCount">Количество копий</label>
+      <label for="copyCount">Number of Copies</label>
       <input type="number" id="copyCount" name="copyCount" min="1" required>
     </div>
 
-    <button type="submit" class="btn">Создать</button>
+    <button type="submit" class="btn">Create</button>
   </form>
 </div>
 
-<a href="/admin/main-page" class="back-button">🏠 Вернуться на главную</a>
+<a href="/admin/main-page" class="back-button">🏠 Return to Main Page</a>
 
 </body>
 </html>

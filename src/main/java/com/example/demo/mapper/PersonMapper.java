@@ -76,8 +76,8 @@ public class PersonMapper {
         person.setAddress(dto.getAddress());
         person.setPassword(dto.getPassword());
 
-        // Пароли чаще всего не редактируются через обычную форму — будь осторожен.
-        // person.setPassword(dto.getPassword()); // если поле будет добавлено в DTO
+        // Passwords are usually not edited via a regular form — be careful.
+        // person.setPassword(dto.getPassword()); // if the field is added to the DTO
 
         return person;
     }

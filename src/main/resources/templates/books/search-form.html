@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <title>Поиск книги</title>
+  <title>Book Search</title>
 </head>
 <body>
 
-<h1>🔍 Поиск книги по названию</h1>
+<h1>🔍 Search Book by Title</h1>
 
 <form th:action="@{/admin/books/search}" method="post">
-  <label>Название:</label>
+  <label>Title:</label>
   <input type="text" name="title" required />
-  <button type="submit">Найти</button>
+  <button type="submit">Find</button>
 </form>
 
 <div th:if="${notFound}">
-  <p style="color: red;">Книга с таким названием не найдена.</p>
+  <p style="color: red;">No book found with that title.</p>
 </div>
 
 </body>

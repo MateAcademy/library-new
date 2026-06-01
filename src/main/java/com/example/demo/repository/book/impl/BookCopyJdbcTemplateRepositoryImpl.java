@@ -82,7 +82,7 @@ public class BookCopyJdbcTemplateRepositoryImpl implements BookCopyRepository {
                 Person person = new Person();
                 person.setMediaId(mediaId);
                 //person.setPersonId(personId);
-                person.setName(rs.getString("p_name")); // важно: имя вытаскиваем
+                person.setName(rs.getString("p_name")); // important: extracting name
                 copy.setOwner(person);
             }
 
@@ -138,7 +138,7 @@ public class BookCopyJdbcTemplateRepositoryImpl implements BookCopyRepository {
         return jdbcTemplate.query(sql, rowMapper, bookId);
     }
 
-    // RowMapper для преобразования результата в объект BookCopy
+    // RowMapper for converting result to BookCopy object
     RowMapper<BookCopy> rowMapper = (rs, rowNum) -> {
         BookCopy copy = new BookCopy();
         copy.setId(rs.getLong("copy_id"));

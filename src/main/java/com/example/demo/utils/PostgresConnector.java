@@ -25,17 +25,17 @@ public class PostgresConnector {
     public Connection connect() {
         Connection connection = null;
         try {
-            // Не обязательно с современных JDK, но можно явно загрузить драйвер
+            // Not required with modern JDK, but can explicitly load driver
             Class.forName("org.postgresql.Driver");
 
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
-            System.out.println("✅ Успешное подключение к PostgreSQL!");
+            System.out.println("✅ Successfully connected to PostgreSQL!");
 
         } catch (ClassNotFoundException e) {
-            System.err.println("❌ PostgreSQL JDBC Driver не найден!");
+            System.err.println("❌ PostgreSQL JDBC Driver not found!");
             e.printStackTrace();
         } catch (SQLException e) {
-            System.err.println("❌ Ошибка подключения к БД!");
+            System.err.println("❌ Database connection error!");
             e.printStackTrace();
         }
 

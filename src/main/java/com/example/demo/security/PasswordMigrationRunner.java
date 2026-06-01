@@ -37,9 +37,9 @@ public class PasswordMigrationRunner implements ApplicationRunner {
         }
 
         if (migrated > 0) {
-            log.info("Миграция паролей завершена: {} пользователей перехешировано в BCrypt", migrated);
+            log.info("Password migration completed: {} users re-hashed to BCrypt", migrated);
         } else {
-            log.info("Миграция паролей: все пароли уже в BCrypt");
+            log.info("Password migration: all passwords are already in BCrypt");
         }
     }
 }

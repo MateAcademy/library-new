@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -118,10 +118,10 @@
 </head>
 <body>
 
-<h1 class="back-button">Обновление книги</h1>
+<h1 class="back-button">Update Book</h1>
 
 <form th:action="@{'/admin/books/' + ${book.bookId}}" th:object="${book}" th:method="patch">
-  <label>ID (нельзя изменить):</label>
+  <label>ID (cannot be changed):</label>
   <input type="text" th:field="*{bookId}" readonly/>
 
   <label>Title:</label>
@@ -136,10 +136,10 @@
   <input type="number" th:field="*{year}" required/>
   <div style="color: red" th:if="${#fields.hasErrors('year')}" th:errors="*{year}">Year error</div>
 
-  <button type="submit" class="btn">💾 Сохранить</button>
+  <button type="submit" class="btn">💾 Save</button>
 </form>
 
-<a href="javascript:history.back()" class="btn-back">⬅ Вернуться назад</a>
+<a href="javascript:history.back()" class="btn-back">⬅ Go Back</a>
 
 </body>
 </html>

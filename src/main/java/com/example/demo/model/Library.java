@@ -35,7 +35,7 @@ public class Library {
     @Size(min = 10, max = 50, message = "City should be between 2 and 30 characters")
 //    @Pattern(
 //        regexp = "^[\\p{L}\\-]+, [\\p{L}\\- ]+, \\d{6}$",
-//        message = "Адрес должен быть в формате: 'Страна, Город, 123456'"
+//        message = "Address must be in format: 'Country, City, 123456'"
 //    )
     @Column(name = "address")
     String address;

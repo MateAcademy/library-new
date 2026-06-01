@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <title>Все пользователи</title>
+    <title>All Users</title>
     <style>
         body {
             background-image: url('/fon/pexels-minan1398.jpg');
@@ -80,16 +80,16 @@
 
 <div class="container" id="peopleContainer">
     <div class="card" th:each="person: ${people}">
-        <a th:href="@{/admin/people/{id}(id=${person.id})}" th:text="${person.getName()}">Имя пользователя</a>
+        <a th:href="@{/admin/people/{id}(id=${person.id})}" th:text="${person.getName()}">User Name</a>
         <p style="margin-top: 8px; color: #333;" th:text="'ID: ' + ${person.mediaId}">ID</p>
     </div>
 </div>
 
 <div th:if="${hasNext}">
-    <a th:href="@{/admin/people(page=${currentPage + 1}, size=20)}" class="back-button">⬇️ Загрузить ещё</a>
+    <a th:href="@{/admin/people(page=${currentPage + 1}, size=20)}" class="back-button">⬇️ Load more</a>
 </div>
 
-<a href="/admin/main-page" class="back-button">🏠 Вернуться на главную</a>
+<a href="/admin/main-page" class="back-button">🏠 Back to main page</a>
 
 </body>
 </html>

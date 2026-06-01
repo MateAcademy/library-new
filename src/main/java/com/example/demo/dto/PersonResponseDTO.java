@@ -29,7 +29,7 @@ public class PersonResponseDTO {
     @Size(min = 2, max = 30, message = "Name should be between 2 and 30 characters")
     String name;
 
-    @NotNull(message = "Возраст обязателен")
+    @NotNull(message = "Age is required")
     @Min(value = 0, message = "Age should be greater then 0")
     @Max(value = 120, message = "Age should be less then 120")
     Integer age;
@@ -42,7 +42,7 @@ public class PersonResponseDTO {
     @Size(min = 10, max = 50, message = "Address should be between 2 and 30 characters")
     @Pattern(
             regexp = "^[\\p{L}\\-]+, [\\p{L}\\- ]+, \\d{6}$",
-            message = "Адрес должен быть в формате: 'Страна, Город, 123456'"
+            message = "Address must be in format: 'Country, City, 123456'"
     )
     @Column(name = "address")
     String address;

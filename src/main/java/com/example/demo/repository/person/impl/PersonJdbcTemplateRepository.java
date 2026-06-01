@@ -277,10 +277,10 @@
 //            int totalInserted = Arrays.stream(updateCounts)
 //                .flatMapToInt(IntStream::of)
 //                .sum();
-//            System.out.println("✅ Batch вставка выполнена успешно. Вставлено строк: " + totalInserted);
+//            System.out.println("✅ Batch insert completed successfully. Rows inserted: " + totalInserted);
 //
 //        } catch (DataAccessException e) {
-//            System.err.println("❌ Ошибка при batch вставке. Транзакция будет откатана.");
+//            System.err.println("❌ Error during batch insert. Transaction will be rolled back.");
 //            throw e;
 //        }
 //    }

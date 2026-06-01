@@ -105,7 +105,7 @@ public class PeopleService {
 
 
     protected void deletePersonFromLibrary(@NonNull Person person, @NonNull Long libraryId, @NonNull String personEmail) {
-//todo: проверить когда будут книги смогу ли удалить человека
+//todo: check if person can be deleted when books are assigned
         if (!person.getBookCopy().isEmpty()) {
             log.warn("Cannot delete person id: {} (email: {}) - has {} checked out books", person.getId(), personEmail, person.getBookCopy().size());
             throw new PersonNotDeletedException(person.getId());
@@ -116,7 +116,7 @@ public class PeopleService {
         if (person.getLibraries().isEmpty() && person.getBookCopy().isEmpty()) {
             personRepository.delete(person.getId());
         } else {
-            personRepository.save(person); // обновим связи
+            personRepository.save(person); // update relations
         }
 
     }

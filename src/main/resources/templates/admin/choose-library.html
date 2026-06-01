@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <title>Выбор библиотеки</title>
+    <title>Library Selection</title>
     <style>
         body {
             background-image: url('/fon/pexels-minan1398.jpg');
@@ -194,7 +194,7 @@
        function validateLibrarySelection() {
            const selectedId = document.getElementById('selectedLibraryId').value;
            if (!selectedId) {
-               alert("Пожалуйста, выберите библиотеку перед входом.");
+               alert("Please select a library before entering.");
                return false;
            }
            return true;
@@ -204,9 +204,9 @@
 <body>
 
 <div class="container">
-    <h1>Выбор библиотеки</h1>
+    <h1>Library Selection</h1>
 
-    <form method="post" action="/admin/main-page" id="libraryForm" onsubmit="return validateLibrarySelection()">
+    <form method="post" th:action="@{/admin/main-page}" id="libraryForm" onsubmit="return validateLibrarySelection()">
         <input type="hidden" name="libraryId" id="selectedLibraryId"/>
 
         <div class="library-grid">
@@ -223,15 +223,16 @@
         <div th:if="${error}" class="error" th:text="${error}"></div>
 
         <div th:if="${error}">
-            <button type="button" class="btn-submit" onclick="history.back()">⬅ Назад</button>
-        </div>
-        <div th:unless="${error}">
-            <button type="submit" class="btn-submit">📚 Войти</button>
-            <button type="button" class="logout-link btn-submit" onclick="window.location.href='/logout'" title="Выйти из аккаунта">
-                🔒 <span>Выйти из аккаунта</span>
-            </button>
+            <button type="button" class="btn-submit" onclick="history.back()">⬅ Back</button>
         </div>
     </form>
+
+    <div th:unless="${error}" style="display:flex; justify-content:center; gap:16px; margin-top:30px;">
+        <button type="submit" form="libraryForm" class="btn-submit" style="margin-top:0;">📚 Enter</button>
+        <button type="button" class="logout-link btn-submit" style="margin-top:0;" onclick="window.location.href='/logout'" title="Log out">
+            🔒 <span>Log out</span>
+        </button>
+    </div>
 </div>
 
 <div class="extra-buttons-container">

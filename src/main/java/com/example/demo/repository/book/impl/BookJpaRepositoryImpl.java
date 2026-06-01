@@ -41,7 +41,7 @@ public class BookJpaRepositoryImpl implements BookRepository {
 
     @Override
     public void update(Book book) {
-        jpaRepository.save(book); // save работает и для обновления
+        jpaRepository.save(book); // save also works for updates
     }
 
     @Override

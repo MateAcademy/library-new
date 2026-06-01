@@ -6,16 +6,16 @@ import org.springframework.web.service.annotation.HttpExchange;
 
 import java.util.List;
 
-// @HttpExchange – новый способ вызова REST API,
-// MyHttpPeople – это интерфейс, который Spring автоматически превращает в HTTP-клиент.
-@HttpExchange(url = "people")   // @HttpExchange(url = "validators") указывает базовый URL.
+// @HttpExchange – new way to call REST API,
+// MyHttpPeople – interface that Spring automatically turns into an HTTP client.
+@HttpExchange(url = "people")   // @HttpExchange(url = "validators") specifies the base URL.
 public interface MyHttpPeople {
 
-    // @GetExchange() – выполняет HTTP GET-запрос.
+    // @GetExchange() – performs HTTP GET request.
     @GetExchange()
     String geAllPeople();
 
-    // @GetExchange("{id}") позволяет делать запрос с переменными в URL
+    // @GetExchange("{id}") allows requests with URL path variables
 //    @GetExchange("{id}")
 //    PersonResponse getPeopleById(@PathVariable("id") int id);
 
@@ -27,7 +27,7 @@ public interface MyHttpPeople {
 //
 //    @GetExchange("descriptionGet/{id}")
 //    String getDescriptionMessage(@PathVariable("id") String id,   // id в самом запросе
-//                                 @RequestParam(required = false) String name,  // параметры в запросе
+//                                 @RequestParam(required = false) String name,  // query parameters
 //                                 @RequestParam(required = false) Integer age);
 //
 //    @PostExchange("helloPostWithBody")

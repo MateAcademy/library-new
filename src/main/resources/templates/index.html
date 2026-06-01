@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <title>Вход</title>
+    <title>Login</title>
     <style>
         * {
             box-sizing: border-box;
@@ -204,24 +204,24 @@
     </div>
 
     <div class="login-box">
-        <h1>Вход в систему</h1>
+        <h1>Sign In</h1>
         <form th:action="@{/login}" method="post">
             <div class="form-group">
-                <label for="email">Электронная почта</label>
+                <label for="email">Email</label>
                 <input type="email" id="email" name="email" required>
             </div>
             <div class="form-group">
-                <label for="password">Пароль</label>
+                <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <button class="btn" type="submit">🔐 Войти</button>
+            <button class="btn" type="submit">🔐 Sign In</button>
         </form>
 
         <div class="link">
-            <a href="/forgot-password">Забыли пароль?</a>
+            <a href="/forgot-password">Forgot password?</a>
         </div>
         <div class="link" style="margin-top: 6px;">
-            <a href="/register">Регистрация</a>
+            <a href="/register">Register</a>
         </div>
     </div>
 </div>

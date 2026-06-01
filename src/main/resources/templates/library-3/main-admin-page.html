@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <title>Главная страница</title>
+  <title>Main Page</title>
   <style>
     body {
       background-image: url('/fon/pexels-minan1398.jpg');
@@ -192,7 +192,7 @@
       if (userId) {
         window.location.href = "/admin/people/" + userId;
       } else {
-        alert("Введите ID пользователя");
+        alert("Enter user ID");
       }
     }
 
@@ -201,7 +201,7 @@
       if (updateId) {
         window.location.href = "/admin/people/" + updateId + "/edit";
       } else {
-        alert("Введите ID пользователя для обновления");
+        alert("Enter user ID to update");
       }
     }
 
@@ -212,7 +212,7 @@
         form.action = "/admin/people/" + deleteId;
         form.submit();
       } else {
-        alert("Введите ID пользователя для удаления");
+        alert("Enter user ID to delete");
       }
     }
 
@@ -223,7 +223,7 @@
         form.action = "/admin/books/" + deleteBookId;
         form.submit();
       } else {
-        alert("Введите ID книги для удаления");
+        alert("Enter book ID to delete");
       }
     }
 
@@ -232,7 +232,7 @@
       if (bookId) {
         window.location.href = "/admin/book-copy/" + bookId;
       } else {
-        alert("Введите ID книги");
+        alert("Enter book ID");
       }
     }
 
@@ -241,7 +241,7 @@
       if (updateBookId) {
         window.location.href = "/admin/books/" + updateBookId + "/edit";
       } else {
-        alert("Введите ID книги для изменения");
+        alert("Enter book ID to edit");
       }
     }
 
@@ -250,7 +250,7 @@
       if (title) {
         window.location.href = "/admin/books/search?title=" + encodeURIComponent(title);
       } else {
-        alert("Введите название книги для поиска");
+        alert("Enter book title to search");
       }
     }
   </script>
@@ -259,34 +259,34 @@
 
 <div class="container">
   <div class="header">
-    <h1 class="title">Меню</h1>
+    <h1 class="title">Menu</h1>
     <div class="user-info">
-      👤 <span th:text="${username}">Админ</span>
-      <a href="/logout" class="logout-link" title="Выйти из аккаунта">
-        🚪 <span>Выйти</span>
+      👤 <span th:text="${username}">Admin</span>
+      <a href="/logout" class="logout-link" title="Log out of account">
+        🚪 <span>Log out</span>
       </a>
     </div>
   </div>
 
   <div class="menu-wrapper">
     <div class="menu">
-      <h2 style="color: #582188">👥 Пользователи</h2>
-      <a href="/admin/people">📋 Показать всех пользователей</a>
-      <a href="/admin/people/new">➕ Добавить нового пользователя</a>
+      <h2 style="color: #582188">👥 Users</h2>
+      <a href="/admin/people">📋 Show all users</a>
+      <a href="/admin/people/new">➕ Add new user</a>
 
       <div class="input-group">
-        <input type="number" id="userId" placeholder="Введите ID">
-        <button class="btn" onclick="findUser()">🔍 Найти</button>
+        <input type="number" id="userId" placeholder="Enter ID">
+        <button class="btn" onclick="findUser()">🔍 Find</button>
       </div>
 
       <div class="input-group">
-        <input type="number" id="updateId" placeholder="Введите ID">
-        <button class="btn" onclick="updateUser()">♻️ Обновить</button>
+        <input type="number" id="updateId" placeholder="Enter ID">
+        <button class="btn" onclick="updateUser()">♻️ Update</button>
       </div>
 
       <div class="input-group">
-        <input type="number" id="deleteId" placeholder="Введите ID">
-        <button class="btn btn-delete" onclick="deleteUser()">❌ Удалить</button>
+        <input type="number" id="deleteId" placeholder="Enter ID">
+        <button class="btn btn-delete" onclick="deleteUser()">❌ Delete</button>
       </div>
 
       <form id="deleteForm" method="post" style="display: none;">
@@ -295,35 +295,35 @@
 
       <hr>
 
-      <h3 style="color: #333; margin-bottom: 10px;">🔄 Массовое добавление</h3>
+      <h3 style="color: #333; margin-bottom: 10px;">🔄 Bulk insert</h3>
       <div class="input-group">
         <form action="/admin/people/insert1000People" method="get" style="margin: 0;">
-          <button class="btn" type="submit">➕ Вставить 1000</button>
+          <button class="btn" type="submit">➕ Insert 1000</button>
         </form>
         <form action="/admin/people/butch_insert1000People" method="get" style="margin: 0;">
-          <button class="btn" type="submit">🚀 Batch вставка</button>
+          <button class="btn" type="submit">🚀 Batch insert</button>
         </form>
       </div>
     </div>
 
     <div class="menu">
-      <h2 style="color: #582188">📚 Библиотека</h2>
-      <a href="/admin/books">📖 Все книги</a>
-      <a href="/admin/books/new">➕ Добавить книгу</a>
+      <h2 style="color: #582188">📚 Library</h2>
+      <a href="/admin/books">📖 All books</a>
+      <a href="/admin/books/new">➕ Add book</a>
 
       <div class="input-group">
-        <input type="number" id="bookId" placeholder="ID книги">
-        <button class="btn" onclick="findBook()">🔍 Найти</button>
+        <input type="number" id="bookId" placeholder="Book ID">
+        <button class="btn" onclick="findBook()">🔍 Find</button>
       </div>
 
       <div class="input-group">
-        <input type="number" id="updateBookId" placeholder="ID книги">
-        <button class="btn" onclick="updateBook()">✏️ Изменить</button>
+        <input type="number" id="updateBookId" placeholder="Book ID">
+        <button class="btn" onclick="updateBook()">✏️ Edit</button>
       </div>
 
       <div class="input-group">
-        <input type="number" id="deleteBookId" placeholder="Введите ID книги">
-        <button class="btn btn-delete" onclick="deleteBook()">❌ Удалить</button>
+        <input type="number" id="deleteBookId" placeholder="Enter book ID">
+        <button class="btn btn-delete" onclick="deleteBook()">❌ Delete</button>
       </div>
 
       <form id="deleteBookForm" method="post" style="display: none;">
@@ -332,16 +332,16 @@
 
       <hr>
 
-      <h3 style="color: #333; margin-top: 20px;">🔎 Поиск по названию</h3>
+      <h3 style="color: #333; margin-top: 20px;">🔎 Search by title</h3>
       <div class="input-group">
-        <input type="text" id="bookTitle" placeholder="Введите название книги">
-        <button class="btn" onclick="searchBookByTitle()">🔍 Искать</button>
+        <input type="text" id="bookTitle" placeholder="Enter book title">
+        <button class="btn" onclick="searchBookByTitle()">🔍 Search</button>
       </div>
     </div>
   </div>
   <br>
 
-  <a href="/admin/choose-library" class="btn-back">⬅ Вернуться к выбору библиотеки</a>
+  <a href="/admin/choose-library" class="btn-back">⬅ Back to library selection</a>
 </div>
 </body>
 </html>

@@ -7,11 +7,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -19,15 +20,27 @@ import org.springframework.security.web.SecurityFilterChain;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SecurityConfiguration {
 
+    private static final String[] PERMIT_URLS = {
+            "/static/**",
+            "/css/**",
+            "/images/**",
+            "/favicon.svg"
+    };
+
     final CustomAuthenticationSuccessHandler successHandler;
+    final PersonDetailsService personDetailsService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/static/**", "/css/**", "/images/**", "/favicon.svg").permitAll()
+                        .requestMatchers(PERMIT_URLS).permitAll()
                         .requestMatchers("/public").anonymous()
                         .requestMatchers("/authenticated").authenticated()
                         .anyRequest().permitAll())
@@ -38,7 +51,8 @@ public class SecurityConfiguration {
                         .passwordParameter("password")
                         .successHandler(successHandler)
                         .failureUrl("/?error")
-                );
+                )
+                .userDetailsService(personDetailsService);
 
         return http.build();
     }

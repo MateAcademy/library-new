@@ -80,7 +80,7 @@
 //
 //    @Override
 //    public void butchSaveAll(List<Person> people) {
-//        //todo: метод здесь не работает
+//        //todo: method does not work here
 //    }
 //
 //    @Override

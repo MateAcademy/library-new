@@ -29,13 +29,13 @@ public class CreatePersonDTOValidator implements Validator {
             errors.rejectValue("email", "400 Error", "Person with this email already exists");
         }
 
-//        // Если новая запись (ID == null)
+//        // If new record (ID == null)
 //        if (person.getId() == null) {
 //            if (personRepository.findByEmail(person.getEmail()).isPresent()) {
 //                errors.rejectValue("email", "400 Error", "Person with this email already exists");
 //            }
 //        } else {
-//            // Обновление — проверка, отличается ли email
+//            // Update — check if email has changed
 //            personRepository.findByPersonId(person.getId()).ifPresent(existingPerson -> {
 //                if (!Objects.equals(existingPerson.getEmail(), person.getEmail())) {
 //                    if (personRepository.findByEmail(person.getEmail()).isPresent()) {

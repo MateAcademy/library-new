@@ -91,12 +91,12 @@
 
 <div class="container" id="bookContainer">
   <div class="card" th:each="book: ${books}">
-    <a th:href="@{/admin/book-copy/{bookId}(bookId=${book.bookId})}" th:text="${book.title}">Название книги</a>
-    <p><strong>Автор:</strong> <span th:text="${book.author}"></span></p>
-    <p><strong>Год издания:</strong> <span th:text="${book.year}"></span></p>
-    <p><strong>Общее количество этой книги:</strong> <span th:text="${book.totalCopies}">0</span></p>
+    <a th:href="@{/admin/book-copy/{bookId}(bookId=${book.bookId})}" th:text="${book.title}">Book Title</a>
+    <p><strong>Author:</strong> <span th:text="${book.author}"></span></p>
+    <p><strong>Publication year:</strong> <span th:text="${book.year}"></span></p>
+    <p><strong>Total copies of this book:</strong> <span th:text="${book.totalCopies}">0</span></p>
     <p>
-      <strong>Именно в этой библиотеке сколько экземпляров:</strong>
+      <strong>Copies in this library:</strong>
       <span th:text="${book.inLibraryCopies} ?: 0"
             th:class="${book.inLibraryCopies == 0} ? 'text-red' : 'text-green'">0</span>
     </p>
@@ -104,10 +104,10 @@
 </div>
 
 <div th:if="${hasNext}">
-  <a th:href="@{/admin/books(page=${currentPage + 1}, size=20)}" class="back-button">⬇️ Загрузить ещё</a>
+  <a th:href="@{/admin/books(page=${currentPage + 1}, size=20)}" class="back-button">⬇️ Load more</a>
 </div>
 
-<a href="javascript:history.back()" class="back-button">🏠 Вернуться на главную</a>
+<a href="javascript:history.back()" class="back-button">🏠 Back to main page</a>
 
 </body>
 </html>

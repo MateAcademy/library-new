@@ -23,7 +23,7 @@ public class LibraryController {
 
         if (allowedLibraryIds == null || !allowedLibraryIds.contains(libraryId)) {
             redirectAttributes.addFlashAttribute("errorLibraryId", libraryId);
-            redirectAttributes.addFlashAttribute("error", "У вас нет доступа к выбранной библиотеке.");
+            redirectAttributes.addFlashAttribute("error", "You do not have access to the selected library.");
             return "redirect:choose-library";
         }
 

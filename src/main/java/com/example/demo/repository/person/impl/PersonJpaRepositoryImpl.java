@@ -69,7 +69,7 @@ public class PersonJpaRepositoryImpl implements PersonRepository {
 
     @Override
     public void update(Person person) {
-        jpaRepository.save(person); // save работает и как update, если personId != null
+        jpaRepository.save(person); // save also works as update if personId != null
     }
 
     @Override
@@ -85,7 +85,7 @@ public class PersonJpaRepositoryImpl implements PersonRepository {
 
     @Override
     public Optional<Long> findLastPersonId() {
-        return jpaRepository.findMaxPersonId(); // можно вернуть то же самое
+        return jpaRepository.findMaxPersonId(); // can return the same value
     }
 
     @Override

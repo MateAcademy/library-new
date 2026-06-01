@@ -60,7 +60,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseBody
     @ExceptionHandler(ClientRequestException.class)
     public ProblemDetail handleClientRequestException(ClientRequestException ex) {
-        log.error("ClientRequestException c аргументами: {}", Arrays.deepToString(ex.getArgs()), ex);
+        log.error("ClientRequestException with arguments: {}", Arrays.deepToString(ex.getArgs()), ex);
         return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, translationService.translate(ex.getMessage(), ex.getArgs()));
     }
 
